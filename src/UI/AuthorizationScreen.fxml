@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.AuthorizationScreenController">
+   <children>
+      <Label layoutX="159.0" layoutY="26.0" text="Airport Service">
+         <font>
+            <Font name="System Bold" size="40.0" />
+         </font>
+      </Label>
+      <TextField fx:id="TFLogin" layoutX="246.0" layoutY="142.0" promptText="login" />
+      <Label layoutX="208.0" layoutY="146.0" text="Login" />
+      <Label layoutX="187.0" layoutY="192.0" text="Password" />
+      <Button fx:id="BLogin" layoutX="218.0" layoutY="293.0" mnemonicParsing="false" onAction="#onLoginClicked" prefHeight="38.0" prefWidth="165.0" text="Login" />
+      <PasswordField fx:id="PFPassword" layoutX="246.0" layoutY="188.0" promptText="password" />
+   </children>
+</Pane>
