@@ -1,4 +1,4 @@
-package Tables;
+package sample.tables;
 
 import java.sql.Date;
 
@@ -9,6 +9,8 @@ public class User {
     private String phone;
     private String email;
     private String role;
+    private String username;
+    private String password;
 
     public User(String name, Date birthDate, String address, String phone, String email, String role) {
         this.name = name;
@@ -65,5 +67,17 @@ public class User {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null || obj.getClass() != this.getClass()) {
+            return false;
+        }
+
+        User user = (User) obj;
+
+        return name.equals(user.name) && birthDate.equals(user.birthDate) && address.equals(user.address)
+                && phone.equals(user.phone) && email.equals(user.email) && role.equals(user.role);
     }
 }

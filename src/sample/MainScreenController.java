@@ -1,16 +1,31 @@
 package sample;
 
-import Tables.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
+import javafx.event.EventType;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import sample.handlers.*;
+import sample.tables.*;
 import javafx.fxml.FXML;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+import java.io.IOException;
+import java.sql.Connection;
 import java.sql.Date;
+import java.sql.SQLException;
+import java.util.ArrayList;
 
-public class MainScreenController {
+public class MainScreenController implements PropertyChangeListener {
     
     public TabPane TPTabPane;
     public Tab TFlights;
@@ -71,12 +86,34 @@ public class MainScreenController {
 
     public Tab TLogOut;
 
+    private Connection con;
+    private FlightsHandler flightsHandler;
+    private UsersHandler usersHandler;
+    private AirlinesHandler airlinesHandler;
+    private PlanesHandler planesHandler;
+    private RolesHandler rolesHandler;
+    private ServiceClassesHandler serviceClassesHandler;
+    private TariffsHandler tariffsHandler;
+    private TicketsHandler ticketsHandler;
+
+    enum Tables {
+        FLIGHT,
+        USER,
+        TICKET,
+        TARIFF,
+        SERVICE_CLASS,
+        ROLE,
+        PLANE,
+        AIRLINE
+    }
 
     public MainScreenController() {
+        System.out.println("created!");
     }
 
     @FXML
     public void initialize() {
+        System.out.println("init started");
         TCFlightCode.setCellValueFactory(new PropertyValueFactory<>("flightCode"));
         TCDeparture.setCellValueFactory(new PropertyValueFactory<>("departure"));
         TCDestination.setCellValueFactory(new PropertyValueFactory<>("destination"));
@@ -110,13 +147,188 @@ public class MainScreenController {
         TCRoleName.setCellValueFactory(new PropertyValueFactory<>("name"));
 
         TCAirlineName.setCellValueFactory(new PropertyValueFactory<>("name"));
-        TCFoundationDate.setCellValueFactory(new PropertyValueFactory<>("foundationName"));
+        TCFoundationDate.setCellValueFactory(new PropertyValueFactory<>("foundationDate"));
 
         TCClassName.setCellValueFactory(new PropertyValueFactory<>("name"));
         TCClassMultiplier.setCellValueFactory(new PropertyValueFactory<>("multiplier"));
 
         TCTariffBasePrice.setCellValueFactory(new PropertyValueFactory<>("basePrice"));
+
+        TFlights.setOnSelectionChanged(event -> {
+            if (!TFlights.isSelected()) {
+                return;
+            }
+            ObservableList<Flight> flights = FXCollections.observableArrayList(flightsHandler.getFlights());
+            ObservableList<Flight> oldFlight = TVFlightsTable.getItems();
+            if (!oldFlight.equals(flights)) {
+                TVFlightsTable.setItems(flights);
+            }
+        });
+
+        TUsers.setOnSelectionChanged(event -> {
+            if (!TUsers.isSelected()) {
+                return;
+            }
+            ObservableList<User> users = FXCollections.observableArrayList(usersHandler.getUsers());
+            ObservableList<User> old = TVUsersTable.getItems();
+            if (!old.equals(users)) {
+                TVUsersTable.setItems(users);
+            }
+        });
+
+        TAirlines.setOnSelectionChanged(event -> {
+            if (!TAirlines.isSelected()) {
+                return;
+            }
+            ObservableList<Airline> airlines = FXCollections.observableArrayList(airlinesHandler.getAirlines());
+            ObservableList<Airline> old = TVAirlinesTable.getItems();
+            if (!old.equals(airlines)) {
+                TVAirlinesTable.setItems(airlines);
+            }
+        });
+
+        TPlanes.setOnSelectionChanged(event -> {
+            if (!TPlanes.isSelected()) {
+                return;
+            }
+            ObservableList<Plane> planes = FXCollections.observableArrayList(planesHandler.getPlanes());
+            ObservableList<Plane> old = TVPlanesTable.getItems();
+            if (!old.equals(planes)) {
+                TVPlanesTable.setItems(planes);
+            }
+        });
+
+        TRoles.setOnSelectionChanged(event -> {
+            if (!TRoles.isSelected()) {
+                return;
+            }
+            ObservableList<Role> roles = FXCollections.observableArrayList(rolesHandler.getRoles());
+            ObservableList<Role> old = TVRolesTable.getItems();
+            if (!old.equals(roles)) {
+                TVRolesTable.setItems(roles);
+            }
+        });
+
+        TClasses.setOnSelectionChanged(event -> {
+            if (!TClasses.isSelected()) {
+                return;
+            }
+            ObservableList<ServiceClass> classes = FXCollections.observableArrayList(serviceClassesHandler.getClasses());
+            ObservableList<ServiceClass> old = TVClassesTable.getItems();
+            if (!old.equals(classes)) {
+                TVClassesTable.setItems(classes);
+            }
+        });
+
+        TTariffs.setOnSelectionChanged(event -> {
+            if (!TTariffs.isSelected()) {
+                return;
+            }
+            ObservableList<Tariff> tariffs = FXCollections.observableArrayList(tariffsHandler.getTariffs());
+            ObservableList<Tariff> old = TVTariffsTable.getItems();
+            if (!old.equals(tariffs)) {
+                TVTariffsTable.setItems(tariffs);
+            }
+        });
+
+        TTickets.setOnSelectionChanged(event -> {
+            if (!TTickets.isSelected()) {
+                return;
+            }
+            ObservableList<Ticket> tickets = FXCollections.observableArrayList(ticketsHandler.getTickets());
+            ObservableList<Ticket> old = TVTicketsTable.getItems();
+            if (!old.equals(tickets)) {
+                TVTicketsTable.setItems(tickets);
+            }
+        });
+
     }
 
-    
+    public void onAddNewFlightClicked() {
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("UI/FlightAdditionScreen.fxml"));
+            Parent root = loader.load();
+
+            FlightAdditionController contr = loader.getController();
+            contr.setConnection(con);
+            contr.addListener(this);
+
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("Airport Service");
+            stage.setScene(new Scene(root, 600, 400));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void onAddNewTicketClicked(ActionEvent event) {
+    }
+
+    public void onAddNewUserClicked(ActionEvent event) {
+    }
+
+    public void onAddNewPlaneClicked(ActionEvent event) {
+    }
+
+    public void onAddNewAirlineClicked(Event event) {
+    }
+
+    public void onAddNewTariffClicked(ActionEvent event) {
+    }
+
+    public void setConnection(Connection con) {
+        this.con = con;
+        flightsHandler = new FlightsHandler(con);
+        usersHandler = new UsersHandler(con);
+        airlinesHandler = new AirlinesHandler(con);
+        planesHandler = new PlanesHandler(con);
+        rolesHandler = new RolesHandler(con);
+        serviceClassesHandler = new ServiceClassesHandler(con);
+        tariffsHandler = new TariffsHandler(con);
+        ticketsHandler = new TicketsHandler(con);
+
+        ObservableList<Flight> flights = FXCollections.observableArrayList(flightsHandler.getFlights());
+        TVFlightsTable.setItems(flights);
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent evt) {
+        String name = evt.getPropertyName();
+        Tables value = Tables.valueOf(name);
+
+        switch (value) {
+            case AIRLINE: {
+
+            }
+            case ROLE: {
+
+            }
+            case USER: {
+                ObservableList<User> users = FXCollections.observableArrayList(usersHandler.getUsers());
+                TVUsersTable.setItems(users);
+            }
+            case PLANE: {
+
+            }
+            case FLIGHT: {
+                ObservableList<Flight> flights = FXCollections.observableArrayList(flightsHandler.getFlights());
+                TVFlightsTable.setItems(flights);
+            }
+            case TARIFF: {
+
+            }
+            case TICKET: {
+
+            }
+            case SERVICE_CLASS: {
+
+            }
+            default: {
+                //TODO ERROR
+            }
+        }
+    }
 }

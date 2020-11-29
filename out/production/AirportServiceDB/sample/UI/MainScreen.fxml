@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<TabPane fx:id="TPTabPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.MainScreenController">
+    <tabs>
+        <Tab fx:id="TFlights" style="-fx-font-size: 16;" text="Flights">
+      <content>
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+               <children>
+                  <TableView fx:id="TVFlightsTable" layoutX="16.0" layoutY="172.0" prefHeight="378.0" prefWidth="768.0">
+                    <columns>
+                      <TableColumn fx:id="TCFlightCode" prefWidth="72.39999198913574" text="Flight code" />
+                      <TableColumn fx:id="TCDeparture" prefWidth="105.80004119873047" text="Departure" />
+                        <TableColumn fx:id="TCDestination" prefWidth="91.79998779296875" text="Destination" />
+                        <TableColumn fx:id="TCDepartureDate" prefWidth="135.19998168945312" text="Departure date" />
+                        <TableColumn fx:id="TCArrivalDate" prefWidth="127.19998168945312" text="Arrival date" />
+                        <TableColumn fx:id="TCPlane" prefWidth="58.4000244140625" text="Plane" />
+                        <TableColumn fx:id="TCAirline" prefWidth="60.4000244140625" text="Airline" />
+                        <TableColumn fx:id="TCStatus" prefWidth="120.199951171875" text="Status" />
+                    </columns>
+                  </TableView>
+                  <DatePicker layoutX="101.0" layoutY="62.0" prefHeight="26.0" prefWidth="150.0" />
+                  <DatePicker layoutX="101.0" layoutY="103.0" prefHeight="26.0" prefWidth="149.0" />
+                  <Button layoutX="314.0" layoutY="62.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="48.0" text="Sort" />
+                  <Button layoutX="635.0" layoutY="57.0" mnemonicParsing="false" onAction="#onAddNewFlightClicked" prefHeight="36.0" prefWidth="76.0" text="Add New" />
+                  <ComboBox layoutX="101.0" layoutY="25.0" prefWidth="150.0" />
+               </children></AnchorPane>
+      </content>
+    </Tab>
+    <Tab fx:id="TTickets" style="-fx-font-size: 16;" text="Tickets">
+      <content>
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+               <children>
+                   <TableView fx:id="TVTicketsTable" layoutX="22.0" layoutY="172.0" prefHeight="378.0" prefWidth="733.0">
+                       <columns>
+                           <TableColumn fx:id="TCPassengerName" prefWidth="171.80002212524414" text="Name" />
+                           <TableColumn fx:id="TCPassengerBirthDate" prefWidth="84.79997253417969" text="Birth date" />
+                           <TableColumn fx:id="TCPassengerPassport" prefWidth="77.60003662109375" text="Passport" />
+                           <TableColumn fx:id="TCPassengerFlightCode" prefWidth="75.60000610351562" text="Flight code" />
+                           <TableColumn fx:id="TCPassengerSeat" prefWidth="37.0" text="Seat" />
+                           <TableColumn fx:id="TCPassengerClass" prefWidth="65.79998779296875" text="Class" />
+                           <TableColumn fx:id="TCTicketPrice" prefWidth="68.60003662109375" text="Price" />
+                           <TableColumn fx:id="TCCashierName" prefWidth="143.4000244140625" text="Cashier name" />
+                       </columns>
+                   </TableView>
+                  <Button layoutX="635.0" layoutY="57.0" mnemonicParsing="false" onAction="#onAddNewTicketClicked" prefHeight="36.0" prefWidth="76.0" text="Add New" />
+               </children></AnchorPane>
+      </content>
+    </Tab>
+    <Tab fx:id="TUsers" style="-fx-font-size: 16;" text="Users">
+        <content>
+            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                <children>
+                    <TableView fx:id="TVUsersTable" layoutX="22.0" layoutY="172.0" prefHeight="378.0" prefWidth="762.0">
+                        <columns>
+                            <TableColumn fx:id="TCUserName" prefWidth="171.80002212524414" text="Name" />
+                            <TableColumn fx:id="TCUserBirthDate" prefWidth="93.80001831054688" text="Birth date" />
+                            <TableColumn fx:id="TCUserAddress" prefWidth="115.60000610351562" text="Address" />
+                            <TableColumn fx:id="TCUserPhone" prefWidth="74.0" text="Phone" />
+                            <TableColumn fx:id="TCUserEmail" prefWidth="100.99996948242188" text="Email" />
+                            <TableColumn fx:id="TCUserRole" minWidth="0.0" prefWidth="72.800048828125" text="Role" />
+                        </columns>
+                    </TableView>
+                    <Button layoutX="635.0" layoutY="57.0" mnemonicParsing="false" onAction="#onAddNewUserClicked" prefHeight="36.0" prefWidth="76.0" text="Add New" />
+                </children></AnchorPane>
+        </content>
+    </Tab>
+    <Tab fx:id="TPlanes" style="-fx-font-size: 16;" text="Planes">
+        <content>
+            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                <children>
+                    <TableView fx:id="TVPlanesTable" layoutX="22.0" layoutY="172.0" prefHeight="378.0" prefWidth="414.0">
+                        <columns>
+                            <TableColumn fx:id="TCPlaneName" prefWidth="97.00000381469727" text="Name" />
+                            <TableColumn fx:id="TCTotalSeats" prefWidth="97.60000610351562" text="Total seats" />
+                            <TableColumn fx:id="TCBusinessSeats" prefWidth="105.59996032714844" text="Business seats" />
+                            <TableColumn fx:id="TCFirstClassSeats" prefWidth="104.4000244140625" text="FirstClassSeats" />
+                        </columns>
+                    </TableView>
+                    <Button layoutX="635.0" layoutY="57.0" mnemonicParsing="false" onAction="#onAddNewPlaneClicked" prefHeight="36.0" prefWidth="76.0" text="Add New" />
+                </children></AnchorPane>
+        </content>
+    </Tab>
+    <Tab fx:id="TRoles" style="-fx-font-size: 16;" text="Roles">
+        <content>
+            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                <children>
+                    <TableView fx:id="TVRolesTable" layoutX="22.0" layoutY="172.0" prefHeight="378.0" prefWidth="182.0">
+                        <columns>
+                            <TableColumn fx:id="TCRoleName" prefWidth="146.60001754760742" text="Role" />
+                        </columns>
+                    </TableView>
+        </children></AnchorPane>
+        </content>
+    </Tab>
+    <Tab fx:id="TAirlines" onSelectionChanged="#onAddNewAirlineClicked" style="-fx-font-size: 16;" text="Airlines">
+        <content>
+            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                <children>
+                    <TableView fx:id="TVAirlinesTable" layoutX="22.0" layoutY="172.0" prefHeight="378.0" prefWidth="253.0">
+                        <columns>
+                            <TableColumn fx:id="TCAirlineName" prefWidth="97.00000381469727" text="Name" />
+                            <TableColumn fx:id="TCFoundationDate" prefWidth="130.4000015258789" text="Foundation date" />
+
+                        </columns>
+                    </TableView>
+                    <Button layoutX="635.0" layoutY="57.0" mnemonicParsing="false" prefHeight="36.0" prefWidth="76.0" text="Add New" />
+                </children></AnchorPane>
+        </content>
+    </Tab>
+    <Tab fx:id="TClasses" style="-fx-font-size: 16;" text="Classes">
+        <content>
+            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                <children>
+                    <TableView fx:id="TVClassesTable" layoutX="22.0" layoutY="172.0" prefHeight="378.0" prefWidth="253.0">
+                        <columns>
+                            <TableColumn fx:id="TCClassName" prefWidth="97.00000381469727" text="Name" />
+                            <TableColumn fx:id="TCClassMultiplier" prefWidth="130.4000015258789" text="Multiplier" />
+
+                        </columns>
+                    </TableView>
+                    <Button layoutX="635.0" layoutY="57.0" mnemonicParsing="false" prefHeight="36.0" prefWidth="76.0" text="Add New" />
+                </children></AnchorPane>
+        </content>
+    </Tab>
+    <Tab fx:id="TTariffs" style="-fx-font-size: 16;" text="Tariffs">
+        <content>
+            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                <children>
+                    <TableView fx:id="TVTariffsTable" layoutX="325.0" layoutY="175.0" prefHeight="378.0" prefWidth="129.0">
+                        <columns>
+                            <TableColumn fx:id="TCTariffBasePrice" prefWidth="97.00000381469727" text="Base price" />
+                        </columns>
+                    </TableView>
+                    <Button layoutX="635.0" layoutY="57.0" mnemonicParsing="false" onAction="#onAddNewTariffClicked" prefHeight="36.0" prefWidth="76.0" text="Add New" />
+                </children></AnchorPane>
+        </content>
+    </Tab>
+    <Tab fx:id="TLogOut" style="-fx-font-size: 16;" text="Log out">
+        <content>
+            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+        </content>
+    </Tab>
+  </tabs>
+</TabPane>

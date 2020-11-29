@@ -1,4 +1,4 @@
-package Tables;
+package sample.tables;
 
 public class Plane {
     private String name;
@@ -43,5 +43,22 @@ public class Plane {
 
     public void setFirstClassSeats(int firstClassSeats) {
         this.firstClassSeats = firstClassSeats;
+    }
+
+    @Override
+    public String toString() {
+        return name;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null || obj.getClass() != this.getClass()) {
+            return false;
+        }
+
+        Plane plane = (Plane) obj;
+
+        return plane.name.equals(this.name) && plane.businessClassSeats == this.businessClassSeats
+                && plane.firstClassSeats == this.firstClassSeats && plane.totalSeats == this.totalSeats;
     }
 }

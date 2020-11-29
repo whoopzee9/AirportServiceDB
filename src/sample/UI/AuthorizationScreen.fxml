@@ -12,9 +12,9 @@
          </font>
       </Label>
       <TextField fx:id="TFLogin" layoutX="246.0" layoutY="142.0" promptText="login" />
+      <PasswordField fx:id="PFPassword" layoutX="246.0" layoutY="188.0" promptText="password" />
       <Label layoutX="208.0" layoutY="146.0" text="Login" />
       <Label layoutX="187.0" layoutY="192.0" text="Password" />
       <Button fx:id="BLogin" layoutX="218.0" layoutY="293.0" mnemonicParsing="false" onAction="#onLoginClicked" prefHeight="38.0" prefWidth="165.0" text="Login" />
-      <PasswordField fx:id="PFPassword" layoutX="246.0" layoutY="188.0" promptText="password" />
    </children>
 </Pane>

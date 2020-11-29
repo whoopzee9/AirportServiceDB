@@ -1,4 +1,4 @@
-package Tables;
+package sample.tables;
 
 import java.sql.Date;
 
@@ -7,9 +7,9 @@ public class Ticket {
     private Date birthDate;
     private String passport;
     private String flightCode;
-    private int seat;
+    private Integer seat;
     private String serviceClass;
-    private double price;
+    private Double price;
     private String cashierName;
 
     public Ticket(String name, Date birthDate, String passport, String flightCode, int seat, String serviceClass, double price, String cashierName) {
@@ -85,5 +85,18 @@ public class Ticket {
 
     public void setCashierName(String cashierName) {
         this.cashierName = cashierName;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null || obj.getClass() != this.getClass()) {
+            return false;
+        }
+
+        Ticket ticket = (Ticket) obj;
+
+        return name.equals(ticket.name) && birthDate.equals(ticket.birthDate) && passport.equals(ticket.passport)
+                && flightCode.equals(ticket.flightCode) && seat.equals(ticket.seat) && serviceClass.equals(ticket.serviceClass)
+                && price.equals(ticket.price) && cashierName.equals(ticket.cashierName);
     }
 }
