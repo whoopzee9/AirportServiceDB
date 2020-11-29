@@ -9,12 +9,10 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import sample.handlers.UsersHandler;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 public class AuthorizationScreenController {
 
@@ -35,8 +33,8 @@ public class AuthorizationScreenController {
                     + "database=kurs;"
                     + "loginTimeout=30;";
             Connection con = DriverManager.getConnection(url, login, password);
-            Statement statement = con.createStatement();
-
+            UsersHandler usersHandler = new UsersHandler(con);
+            String role = usersHandler.getRole(login);
 
             Stage stage = (Stage) TFLogin.getScene().getWindow();
             stage.close();
@@ -47,6 +45,7 @@ public class AuthorizationScreenController {
 
             MainScreenController contr = loader.getController();
             contr.setConnection(con);
+            contr.setRole(role);
 
             stage = new Stage();
             stage.initModality(Modality.APPLICATION_MODAL);

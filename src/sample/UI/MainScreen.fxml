@@ -2,6 +2,7 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
 <TabPane fx:id="TPTabPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" tabClosingPolicy="UNAVAILABLE" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.MainScreenController">
     <tabs>
@@ -79,7 +80,7 @@
                             <TableColumn fx:id="TCFirstClassSeats" prefWidth="104.4000244140625" text="FirstClassSeats" />
                         </columns>
                     </TableView>
-                    <Button layoutX="635.0" layoutY="57.0" mnemonicParsing="false" onAction="#onAddNewPlaneClicked" prefHeight="36.0" prefWidth="76.0" text="Add New" />
+                    <Button fx:id="BAddPlanes" layoutX="635.0" layoutY="57.0" mnemonicParsing="false" onAction="#onAddNewPlaneClicked" prefHeight="36.0" prefWidth="76.0" text="Add New" />
                 </children></AnchorPane>
         </content>
     </Tab>
@@ -140,7 +141,19 @@
     </Tab>
     <Tab fx:id="TLogOut" style="-fx-font-size: 16;" text="Log out">
         <content>
-            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+               <children>
+                  <Button layoutX="322.0" layoutY="245.0" mnemonicParsing="false" onAction="#onLogOutClicked" prefHeight="77.0" prefWidth="156.0" text="Log Out">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </Button>
+                  <Label layoutX="184.0" layoutY="89.0" text="Are you sure want to log out?">
+                     <font>
+                        <Font name="System Bold" size="31.0" />
+                     </font>
+                  </Label>
+               </children></AnchorPane>
         </content>
     </Tab>
   </tabs>

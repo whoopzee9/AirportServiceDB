@@ -57,4 +57,13 @@ public class UsersHandler {
 
         ps.executeUpdate();
     }
+
+    public String getRole(String username) throws SQLException {
+        PreparedStatement ps = con.prepareStatement("SELECT r.Role FROM Users u " +
+                "INNER JOIN Roles r on u.Role_id = r.id WHERE u.Login = ?");
+        ps.setString(1, username);
+        ResultSet rs = ps.executeQuery();
+        rs.next();
+        return rs.getString(1);
+    }
 }

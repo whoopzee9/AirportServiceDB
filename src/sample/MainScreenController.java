@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 public class MainScreenController implements PropertyChangeListener {
@@ -65,6 +66,7 @@ public class MainScreenController implements PropertyChangeListener {
     public TableColumn<Plane, Integer> TCTotalSeats;
     public TableColumn<Plane, Integer> TCBusinessSeats;
     public TableColumn<Plane, Integer> TCFirstClassSeats;
+    public Button BAddPlanes;
 
     public Tab TRoles;
     public TableView<Role> TVRolesTable;
@@ -95,6 +97,7 @@ public class MainScreenController implements PropertyChangeListener {
     private ServiceClassesHandler serviceClassesHandler;
     private TariffsHandler tariffsHandler;
     private TicketsHandler ticketsHandler;
+    private Roles currRole;
 
     enum Tables {
         FLIGHT,
@@ -107,13 +110,19 @@ public class MainScreenController implements PropertyChangeListener {
         AIRLINE
     }
 
+    enum Roles {
+        ADMIN,
+        CASHIER,
+        DISPATCHER
+    }
+
     public MainScreenController() {
         System.out.println("created!");
     }
 
     @FXML
     public void initialize() {
-        System.out.println("init started");
+
         TCFlightCode.setCellValueFactory(new PropertyValueFactory<>("flightCode"));
         TCDeparture.setCellValueFactory(new PropertyValueFactory<>("departure"));
         TCDestination.setCellValueFactory(new PropertyValueFactory<>("destination"));
@@ -232,6 +241,7 @@ public class MainScreenController implements PropertyChangeListener {
         });
 
         TTickets.setOnSelectionChanged(event -> {
+
             if (!TTickets.isSelected()) {
                 return;
             }
@@ -241,7 +251,6 @@ public class MainScreenController implements PropertyChangeListener {
                 TVTicketsTable.setItems(tickets);
             }
         });
-
     }
 
     public void onAddNewFlightClicked() {
@@ -268,6 +277,23 @@ public class MainScreenController implements PropertyChangeListener {
     }
 
     public void onAddNewUserClicked(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("UI/UserAdditionScreen.fxml"));
+            Parent root = loader.load();
+
+            UserAdditionController contr = loader.getController();
+            contr.setConnection(con);
+            contr.addListener(this);
+
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("Airport Service");
+            stage.setScene(new Scene(root, 600, 400));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void onAddNewPlaneClicked(ActionEvent event) {
@@ -277,6 +303,25 @@ public class MainScreenController implements PropertyChangeListener {
     }
 
     public void onAddNewTariffClicked(ActionEvent event) {
+    }
+
+    public void onLogOutClicked(ActionEvent event) {
+        try {
+            Stage stage = (Stage) TPTabPane.getScene().getWindow();
+            stage.close();
+
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("UI/AuthorizationScreen.fxml"));
+            Parent root = loader.load();
+
+            stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("Airport Service");
+            stage.setScene(new Scene(root, 600, 400));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void setConnection(Connection con) {
@@ -292,6 +337,38 @@ public class MainScreenController implements PropertyChangeListener {
 
         ObservableList<Flight> flights = FXCollections.observableArrayList(flightsHandler.getFlights());
         TVFlightsTable.setItems(flights);
+
+    }
+
+    public void setRole(String role) {
+        currRole = Roles.valueOf(role.toUpperCase());
+        closeTabs();
+    }
+
+    public void closeTabs() {
+        switch (currRole) {
+            case ADMIN -> {
+
+            }
+            case CASHIER -> {
+                TPTabPane.getTabs().remove(TUsers);
+                TPTabPane.getTabs().remove(TTariffs);
+                TPTabPane.getTabs().remove(TRoles);
+                TPTabPane.getTabs().remove(TClasses);
+                TPTabPane.getTabs().remove(TPlanes);
+                TPTabPane.getTabs().remove(TAirlines);
+
+            }
+            case DISPATCHER -> {
+                TPTabPane.getTabs().remove(TUsers);
+                TPTabPane.getTabs().remove(TTariffs);
+                TPTabPane.getTabs().remove(TRoles);
+                TPTabPane.getTabs().remove(TClasses);
+                BAddPlanes.setVisible(false);
+                TPTabPane.getTabs().remove(TAirlines);
+                TPTabPane.getTabs().remove(TTickets);
+            }
+        }
     }
 
     @Override
@@ -300,33 +377,33 @@ public class MainScreenController implements PropertyChangeListener {
         Tables value = Tables.valueOf(name);
 
         switch (value) {
-            case AIRLINE: {
+            case AIRLINE -> {
 
             }
-            case ROLE: {
+            case ROLE -> {
 
             }
-            case USER: {
+            case USER -> {
                 ObservableList<User> users = FXCollections.observableArrayList(usersHandler.getUsers());
                 TVUsersTable.setItems(users);
             }
-            case PLANE: {
+            case PLANE -> {
 
             }
-            case FLIGHT: {
+            case FLIGHT -> {
                 ObservableList<Flight> flights = FXCollections.observableArrayList(flightsHandler.getFlights());
                 TVFlightsTable.setItems(flights);
             }
-            case TARIFF: {
+            case TARIFF -> {
 
             }
-            case TICKET: {
+            case TICKET -> {
 
             }
-            case SERVICE_CLASS: {
+            case SERVICE_CLASS -> {
 
             }
-            default: {
+            default -> {
                 //TODO ERROR
             }
         }
