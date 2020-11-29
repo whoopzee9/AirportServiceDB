@@ -4,7 +4,6 @@ module SMO {
     requires javafx.fxml;
     requires java.desktop;
     requires java.sql;
-    requires tornadofx.controls;
     requires java.base;
 
     opens sample;
