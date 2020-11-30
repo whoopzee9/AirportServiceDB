@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.PlaneAdditionController">
+    <children>
+        <Label layoutX="194.0" layoutY="14.0" text="Add new plane">
+            <font>
+                <Font name="System Bold" size="30.0" />
+            </font>
+        </Label>
+        <Button layoutX="462.0" layoutY="329.0" mnemonicParsing="false" onAction="#onDoneClicked" prefHeight="46.0" prefWidth="105.0" text="Done" />
+        <TextField fx:id="TFName" layoutX="142.0" layoutY="87.0" prefHeight="26.0" prefWidth="149.0" promptText="name" />
+        <Label layoutX="81.0" layoutY="92.0" text="Name" />
+        <TextField fx:id="TFBusiness" layoutX="143.0" layoutY="128.0" promptText="business" />
+        <TextField fx:id="TFTotal" layoutX="419.0" layoutY="88.0" promptText="total" />
+        <Label layoutX="29.0" layoutY="132.0" text="Business class seats" />
+        <Label layoutX="347.0" layoutY="92.0" text="Total seats" />
+        <Label layoutX="335.0" layoutY="132.0" text="First class seats" />
+        <TextField fx:id="TFFirst" layoutX="419.0" layoutY="128.0" promptText="first" />
+    </children>
+
+</AnchorPane>

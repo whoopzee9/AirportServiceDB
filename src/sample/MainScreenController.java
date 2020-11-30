@@ -27,7 +27,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 public class MainScreenController implements PropertyChangeListener {
-    
+
     public TabPane TPTabPane;
     public Tab TFlights;
     public TableView<Flight> TVFlightsTable;
@@ -319,15 +319,63 @@ public class MainScreenController implements PropertyChangeListener {
     }
 
     public void onAddNewPlaneClicked(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("UI/PlaneAdditionScreen.fxml"));
+            Parent root = loader.load();
 
+            PlaneAdditionController contr = loader.getController();
+            contr.setConnection(con);
+            contr.addListener(this);
+
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("Airport Service");
+            stage.setScene(new Scene(root, 600, 400));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void onAddNewAirlineClicked(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("UI/AirlineAdditionScreen.fxml"));
+            Parent root = loader.load();
 
+            AirlineScreenController contr = loader.getController();
+            contr.setConnection(con);
+            contr.addListener(this);
+
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("Airport Service");
+            stage.setScene(new Scene(root, 500, 300));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void onAddNewTariffClicked(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("UI/TariffAdditionScreen.fxml"));
+            Parent root = loader.load();
 
+            TariffScreenController contr = loader.getController();
+            contr.setConnection(con);
+            contr.addListener(this);
+
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("Airport Service");
+            stage.setScene(new Scene(root, 500, 300));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void onLogOutClicked(ActionEvent event) {
@@ -406,9 +454,10 @@ public class MainScreenController implements PropertyChangeListener {
 
         switch (value) {
             case AIRLINE -> {
-
+                ObservableList<Airline> airlines = FXCollections.observableArrayList(airlinesHandler.getAirlines());
+                TVAirlinesTable.setItems(airlines);
             }
-            case ROLE -> {
+            case ROLE, SERVICE_CLASS -> {
 
             }
             case USER -> {
@@ -416,21 +465,20 @@ public class MainScreenController implements PropertyChangeListener {
                 TVUsersTable.setItems(users);
             }
             case PLANE -> {
-
+                ObservableList<Plane> planes = FXCollections.observableArrayList(planesHandler.getPlanes());
+                TVPlanesTable.setItems(planes);
             }
             case FLIGHT -> {
                 ObservableList<Flight> flights = FXCollections.observableArrayList(flightsHandler.getFlights());
                 TVFlightsTable.setItems(flights);
             }
             case TARIFF -> {
-
+                ObservableList<Tariff> tariffs = FXCollections.observableArrayList(tariffsHandler.getTariffs());
+                TVTariffsTable.setItems(tariffs);
             }
             case TICKET -> {
                 ObservableList<Ticket> tickets = FXCollections.observableArrayList(ticketsHandler.getTickets());
                 TVTicketsTable.setItems(tickets);
-            }
-            case SERVICE_CLASS -> {
-
             }
             default -> {
                 //TODO ERROR

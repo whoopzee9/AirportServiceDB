@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="300.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.AirlineScreenController">
+    <children>
+        <Label layoutX="139.0" layoutY="14.0" text="Add new airline">
+            <font>
+                <Font name="System Bold" size="30.0" />
+            </font>
+        </Label>
+        <Button layoutX="360.0" layoutY="220.0" mnemonicParsing="false" onAction="#onDoneClicked" prefHeight="46.0" prefWidth="105.0" text="Done" />
+        <TextField fx:id="TFName" layoutX="224.0" layoutY="87.0" prefHeight="26.0" prefWidth="149.0" promptText="name" />
+        <Label layoutX="141.0" layoutY="91.0" text="Name" />
+        <Label layoutX="113.0" layoutY="131.0" text="Foundation date" />
+      <DatePicker fx:id="DPDate" layoutX="225.0" layoutY="127.0" prefHeight="26.0" prefWidth="150.0" promptText="date" />
+    </children>
+
+</AnchorPane>

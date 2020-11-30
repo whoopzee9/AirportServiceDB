@@ -117,6 +117,13 @@ public class TicketAdditionController {
         Flight flight = CBFlight.getValue();
         ServiceClass serviceClass = CBClass.getValue();
 
+        if (name.isEmpty() || dateStr.isEmpty() || passport.isEmpty() || seat == null
+            || flight == null || serviceClass == null) {
+            alert.setContentText("Missing input, please check all fields!");
+            alert.showAndWait();
+            return;
+        }
+
         DateFormat format = new SimpleDateFormat("dd.MM.yyyy");
         Date dateTmp;
         try {

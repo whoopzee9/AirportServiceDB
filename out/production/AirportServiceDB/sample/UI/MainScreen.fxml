@@ -97,7 +97,7 @@
         </children></AnchorPane>
         </content>
     </Tab>
-    <Tab fx:id="TAirlines" onSelectionChanged="#onAddNewAirlineClicked" style="-fx-font-size: 16;" text="Airlines">
+    <Tab fx:id="TAirlines" style="-fx-font-size: 16;" text="Airlines">
         <content>
             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                 <children>
@@ -108,7 +108,7 @@
 
                         </columns>
                     </TableView>
-                    <Button layoutX="635.0" layoutY="57.0" mnemonicParsing="false" prefHeight="36.0" prefWidth="76.0" text="Add New" />
+                    <Button layoutX="635.0" layoutY="57.0" mnemonicParsing="false" onAction="#onAddNewAirlineClicked" prefHeight="36.0" prefWidth="76.0" text="Add New" />
                 </children></AnchorPane>
         </content>
     </Tab>
@@ -123,7 +123,6 @@
 
                         </columns>
                     </TableView>
-                    <Button layoutX="635.0" layoutY="57.0" mnemonicParsing="false" prefHeight="36.0" prefWidth="76.0" text="Add New" />
                 </children></AnchorPane>
         </content>
     </Tab>
