@@ -39,6 +39,7 @@ public class MainScreenController implements PropertyChangeListener {
     public TableColumn<Flight, String> TCPlane;
     public TableColumn<Flight, String> TCAirline;
     public TableColumn<Flight, String> TCStatus;
+    public Button BAddFlights;
 
     public Tab TTickets;
     public TableView<Ticket> TVTicketsTable;
@@ -50,6 +51,7 @@ public class MainScreenController implements PropertyChangeListener {
     public TableColumn<Ticket, String> TCPassengerClass;
     public TableColumn<Ticket, Double> TCTicketPrice;
     public TableColumn<Ticket, String> TCCashierName;
+    public Button BAddTickets;
 
     public Tab TUsers;
     public TableView<User> TVUsersTable;
@@ -59,6 +61,7 @@ public class MainScreenController implements PropertyChangeListener {
     public TableColumn<User, String> TCUserPhone;
     public TableColumn<User, String> TCUserEmail;
     public TableColumn<User, String> TCUserRole;
+    public TableColumn<User, String> TCUserLogin;
 
     public Tab TPlanes;
     public TableView<Plane> TVPlanesTable;
@@ -98,6 +101,7 @@ public class MainScreenController implements PropertyChangeListener {
     private TariffsHandler tariffsHandler;
     private TicketsHandler ticketsHandler;
     private Roles currRole;
+    private User currUser;
 
     enum Tables {
         FLIGHT,
@@ -147,6 +151,7 @@ public class MainScreenController implements PropertyChangeListener {
         TCUserPhone.setCellValueFactory(new PropertyValueFactory<>("phone"));
         TCUserEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
         TCUserRole.setCellValueFactory(new PropertyValueFactory<>("role"));
+        TCUserLogin.setCellValueFactory(new PropertyValueFactory<>("username"));
 
         TCPlaneName.setCellValueFactory(new PropertyValueFactory<>("name"));
         TCTotalSeats.setCellValueFactory(new PropertyValueFactory<>("totalSeats"));
@@ -274,6 +279,23 @@ public class MainScreenController implements PropertyChangeListener {
     }
 
     public void onAddNewTicketClicked(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("UI/TicketAdditionScreen.fxml"));
+            Parent root = loader.load();
+
+            TicketAdditionController contr = loader.getController();
+            contr.setParameters(con, currUser);
+            contr.addListener(this);
+
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setTitle("Airport Service");
+            stage.setScene(new Scene(root, 600, 400));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void onAddNewUserClicked(ActionEvent event) {
@@ -297,12 +319,15 @@ public class MainScreenController implements PropertyChangeListener {
     }
 
     public void onAddNewPlaneClicked(ActionEvent event) {
+
     }
 
-    public void onAddNewAirlineClicked(Event event) {
+    public void onAddNewAirlineClicked(ActionEvent event) {
+
     }
 
     public void onAddNewTariffClicked(ActionEvent event) {
+
     }
 
     public void onLogOutClicked(ActionEvent event) {
@@ -340,15 +365,17 @@ public class MainScreenController implements PropertyChangeListener {
 
     }
 
-    public void setRole(String role) {
-        currRole = Roles.valueOf(role.toUpperCase());
+    public void setUser(User user) {
+        currUser = user;
+        currRole = Roles.valueOf(currUser.getRole().toUpperCase());
         closeTabs();
     }
 
     public void closeTabs() {
         switch (currRole) {
             case ADMIN -> {
-
+                BAddFlights.setVisible(false);
+                BAddTickets.setVisible(false);
             }
             case CASHIER -> {
                 TPTabPane.getTabs().remove(TUsers);
@@ -357,6 +384,7 @@ public class MainScreenController implements PropertyChangeListener {
                 TPTabPane.getTabs().remove(TClasses);
                 TPTabPane.getTabs().remove(TPlanes);
                 TPTabPane.getTabs().remove(TAirlines);
+                BAddFlights.setVisible(false);
 
             }
             case DISPATCHER -> {
@@ -398,7 +426,8 @@ public class MainScreenController implements PropertyChangeListener {
 
             }
             case TICKET -> {
-
+                ObservableList<Ticket> tickets = FXCollections.observableArrayList(ticketsHandler.getTickets());
+                TVTicketsTable.setItems(tickets);
             }
             case SERVICE_CLASS -> {
 

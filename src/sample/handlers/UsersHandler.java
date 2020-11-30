@@ -20,7 +20,7 @@ public class UsersHandler {
         try {
             Statement statement = con.createStatement();
 
-            ResultSet resultSet = statement.executeQuery("SELECT u.Name, u.BirthDate, u.Address, u.Phone, u.Email, r.Role\n" +
+            ResultSet resultSet = statement.executeQuery("SELECT u.Name, u.BirthDate, u.Address, u.Phone, u.Email, r.Role, u.Login\n" +
                     "FROM Users u\n" +
                     "INNER JOIN Roles r ON r.Id = u.Role_id \n");
 
@@ -31,7 +31,8 @@ public class UsersHandler {
                 String phone = resultSet.getString(4);
                 String email = resultSet.getString(5);
                 String role = resultSet.getString(6);
-                users.add(new User(name, date, address, phone, email, role));
+                String login = resultSet.getString(7);
+                users.add(new User(name, date, address, phone, email, role, login));
             }
         } catch (SQLException e) {
             Alert alert = new Alert(Alert.AlertType.WARNING);
@@ -58,12 +59,22 @@ public class UsersHandler {
         ps.executeUpdate();
     }
 
-    public String getRole(String username) throws SQLException {
-        PreparedStatement ps = con.prepareStatement("SELECT r.Role FROM Users u " +
+    public User getUser(String username) throws SQLException {
+        PreparedStatement ps = con.prepareStatement("SELECT u.Name, u.BirthDate, u.Address, u.Phone, u.Email, r.Role, u.Login " +
+                "FROM Users u " +
                 "INNER JOIN Roles r on u.Role_id = r.id WHERE u.Login = ?");
         ps.setString(1, username);
-        ResultSet rs = ps.executeQuery();
-        rs.next();
-        return rs.getString(1);
+        ResultSet resultSet = ps.executeQuery();
+
+        resultSet.next();
+        String name = resultSet.getString(1);
+        Date date = resultSet.getDate(2);
+        String address = resultSet.getString(3);
+        String phone = resultSet.getString(4);
+        String email = resultSet.getString(5);
+        String role = resultSet.getString(6);
+        String login = resultSet.getString(7);
+        User user = new User(name, date, address, phone, email, role, login);
+        return user;
     }
 }

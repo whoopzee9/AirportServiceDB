@@ -99,6 +99,11 @@ public class Flight {
     }
 
     @Override
+    public String toString() {
+        return flightCode + ": " + departure + " - " + destination;
+    }
+
+    @Override
     public boolean equals(Object obj) {
         if (obj == null || obj.getClass() != this.getClass()) {
             return false;

@@ -93,7 +93,7 @@ public class UserAdditionController {
 
         java.sql.Date birthDate = new java.sql.Date(dateTmp.getTime());
 
-        User user = new User(name, birthDate, address, phone, email, role.getName());
+        User user = new User(name, birthDate, address, phone, email, role.getName(), username);
 
         try {
             usersHandler.addUser(user, username, password);

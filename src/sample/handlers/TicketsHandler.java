@@ -59,6 +59,37 @@ public class TicketsHandler {
         ps.setString(6, ticket.getServiceClass());
         ps.setString(7, ticket.getCashierName());
 
-        ps.executeQuery();
+        ps.executeUpdate();
+    }
+
+    public ArrayList<Integer> getFreeSeats(String flightId, String className, int totalSeats) {
+        ArrayList<Integer> seats = new ArrayList<>();
+        try {
+            PreparedStatement ps = con.prepareStatement("SELECT t.Seat \n" +
+                    "FROM Tickets t\n" +
+                    "INNER JOIN Classes c ON c.Id = t.Class_id\n" +
+                    "INNER JOIN Flights f ON f.Id = t.Flight_id\n" +
+                    "WHERE c.Name = ? AND f.Flight_code = ?");
+            ps.setString(1, className);
+            ps.setString(2, flightId);
+            ResultSet resultSet = ps.executeQuery();
+
+            for (int i = 1; i <= totalSeats; i++) {
+                seats.add(i);
+            }
+
+            while (resultSet.next()) {
+                Integer seat = resultSet.getInt(1);
+                seats.remove(seat);
+            }
+
+        } catch (SQLException e) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Warning");
+            alert.setHeaderText("No permission");
+            alert.setContentText("You don't have permission to read from tickets table!");
+            alert.showAndWait();
+        }
+        return seats;
     }
 }

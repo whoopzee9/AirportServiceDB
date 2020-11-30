@@ -2,6 +2,7 @@ package sample.handlers;
 
 import javafx.scene.control.Alert;
 import sample.tables.Flight;
+import sample.tables.Plane;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -60,5 +61,52 @@ public class FlightsHandler {
         ps.setDouble(9, flight.getBasePrice());
 
         ps.executeUpdate();
+    }
+
+    public double getFlightTariff(String flightCode) {
+        double tariff = 0;
+        try {
+            PreparedStatement ps = con.prepareStatement("SELECT t.Base_price FROM Flights f " +
+                    "INNER JOIN Tariffs t on f.Tariff_id = t.Id " +
+                    "WHERE f.Flight_code = ?");
+            ps.setString(1, flightCode);
+            ResultSet resultSet = ps.executeQuery();
+
+            resultSet.next();
+            tariff = resultSet.getDouble(1);
+        } catch (SQLException e) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Warning");
+            alert.setHeaderText("Request error");
+            alert.setContentText("You don't have permission to read from flight table!");
+            alert.showAndWait();
+        }
+        return tariff;
+    }
+
+    public Plane getFlightPlane(String flightCode) {
+        Plane plane = null;
+        try {
+            PreparedStatement ps = con.prepareStatement("SELECT p.Name, p.Total_seats, p.Business_class_seats, p.First_class_seats FROM Flights f " +
+                    "INNER JOIN Planes p on f.Plane_id = p.id " +
+                    "WHERE f.Flight_code = ?");
+            ps.setString(1, flightCode);
+            ResultSet resultSet = ps.executeQuery();
+
+            resultSet.next();
+            String name = resultSet.getString(1);
+            int total = resultSet.getInt(2);
+            int business = resultSet.getInt(3);
+            int first = resultSet.getInt(4);
+
+            plane = new Plane(name, total, business, first);
+        } catch (SQLException e) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Warning");
+            alert.setHeaderText("Request error");
+            alert.setContentText("You don't have permission to read from flight table!");
+            alert.showAndWait();
+        }
+        return plane;
     }
 }
