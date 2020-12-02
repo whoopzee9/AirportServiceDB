@@ -25,10 +25,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.Time;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
@@ -191,11 +188,7 @@ public class MainScreenController implements PropertyChangeListener {
                 try {
                     parsedDate = dateFormat.parse(string);
                 } catch (ParseException e) {
-                    Alert alert = new Alert(Alert.AlertType.WARNING);
-                    alert.setTitle("Warning");
-                    alert.setHeaderText("Wrong input");
-                    alert.setContentText("Wrong timestamp!");
-                    alert.showAndWait();
+                    showAlert("Wrong input!", "Wrong timestamp!");
                     return null;
                 }
                 return new Timestamp(parsedDate.getTime());
@@ -218,11 +211,7 @@ public class MainScreenController implements PropertyChangeListener {
                 try {
                     parsedDate = dateFormat.parse(string);
                 } catch (ParseException e) {
-                    Alert alert = new Alert(Alert.AlertType.WARNING);
-                    alert.setTitle("Warning");
-                    alert.setHeaderText("Wrong input");
-                    alert.setContentText("Wrong date!");
-                    alert.showAndWait();
+                    showAlert("Wrong input!", "Wrong date!");
                     return null;
                 }
                 return new Date(parsedDate.getTime());
@@ -244,11 +233,7 @@ public class MainScreenController implements PropertyChangeListener {
                 try {
                     value = Double.parseDouble(string);
                 } catch (NumberFormatException e) {
-                    Alert alert = new Alert(Alert.AlertType.WARNING);
-                    alert.setTitle("Warning");
-                    alert.setHeaderText("Wrong input");
-                    alert.setContentText("Wrong number!");
-                    alert.showAndWait();
+                    showAlert("Wrong input!", "Wrong number!");
                     return null;
                 }
                 return value;
@@ -360,6 +345,8 @@ public class MainScreenController implements PropertyChangeListener {
             }
         });
     }
+
+    //ADDING HANDLERS---------------------------------------------------------------------
 
     public void onAddNewFlightClicked() {
         try {
@@ -499,6 +486,13 @@ public class MainScreenController implements PropertyChangeListener {
             e.printStackTrace();
         }
     }
+
+    public void onExitClicked() {
+        Stage stage = (Stage) TPTabPane.getScene().getWindow();
+        stage.close();
+    }
+
+    //EDITING HANDLERS--------------------------------------------------------------------------
 
     public void onDepartureDateEditCommit(TableColumn.CellEditEvent<Flight, Timestamp> event) {
         TablePosition<Flight, Timestamp> pos = event.getTablePosition();
@@ -670,9 +664,81 @@ public class MainScreenController implements PropertyChangeListener {
     }
 
 
+    //DELETING HANDLERS---------------------------------------------------------------------
+
     public void onDeleteTicketClicked(ActionEvent event) {
-        System.out.println(TVTicketsTable.getSelectionModel().getFocusedIndex());
-        System.out.println(TVTicketsTable.getSelectionModel().isSelected(0));
+        int index = TVTicketsTable.getSelectionModel().getFocusedIndex();
+        if (index == 0 && !TVTicketsTable.getSelectionModel().isSelected(0)) {
+            showAlert("Wrong input!", "Nothing is selected!");
+            return;
+        }
+        Ticket ticket = TVTicketsTable.getItems().get(index);
+        try {
+            ticketsHandler.deleteTicket(ticket);
+            TVTicketsTable.getItems().remove(index);
+        } catch (SQLException throwables) {
+            showAlert("Deleting conflict!", "Can not delete. Please check all dependencies!");
+        }
+    }
+
+    public void onDeleteUserClicked(ActionEvent event) {
+        int index = TVUsersTable.getSelectionModel().getFocusedIndex();
+        if (index == 0 && !TVUsersTable.getSelectionModel().isSelected(0)) {
+            showAlert("Wrong input!", "Nothing is selected!");
+            return;
+        }
+        User user = TVUsersTable.getItems().get(index);
+        try {
+            usersHandler.deleteUser(user);
+            TVUsersTable.getItems().remove(index);
+        } catch (SQLException throwables) {
+            showAlert("Deleting conflict!", "Can not delete. Please check all dependencies!");
+        }
+    }
+
+    public void onDeletePlaneClicked(ActionEvent event) {
+        int index = TVPlanesTable.getSelectionModel().getFocusedIndex();
+        if (index == 0 && !TVPlanesTable.getSelectionModel().isSelected(0)) {
+            showAlert("Wrong input!", "Nothing is selected!");
+            return;
+        }
+        Plane plane = TVPlanesTable.getItems().get(index);
+        try {
+            planesHandler.deletePlane(plane);
+            TVPlanesTable.getItems().remove(index);
+        } catch (SQLException throwables) {
+            showAlert("Deleting conflict!", "Can not delete. Please check all dependencies!");
+        }
+    }
+
+    public void onDeleteAirlineClicked(ActionEvent event) {
+        int index = TVAirlinesTable.getSelectionModel().getFocusedIndex();
+        if (index == 0 && !TVAirlinesTable.getSelectionModel().isSelected(0)) {
+            showAlert("Wrong input!", "Nothing is selected!");
+            return;
+        }
+        Airline airline = TVAirlinesTable.getItems().get(index);
+        try {
+            airlinesHandler.deleteAirline(airline);
+            TVAirlinesTable.getItems().remove(index);
+        } catch (SQLException throwables) {
+            showAlert("Deleting conflict!", "Can not delete. Please check all dependencies!");
+        }
+    }
+
+    public void onDeleteTariffClicked(ActionEvent event) {
+        int index = TVTariffsTable.getSelectionModel().getFocusedIndex();
+        if (index == 0 && !TVTariffsTable.getSelectionModel().isSelected(0)) {
+            showAlert("Wrong input!", "Nothing is selected!");
+            return;
+        }
+        Tariff tariff = TVTariffsTable.getItems().get(index);
+        try {
+            tariffsHandler.deleteTariff(tariff);
+            TVTariffsTable.getItems().remove(index);
+        } catch (SQLException throwables) {
+            showAlert("Deleting conflict!", "Can not delete. Please check all dependencies!");
+        }
     }
 
     public void setConnection(Connection con) {
@@ -697,6 +763,14 @@ public class MainScreenController implements PropertyChangeListener {
         currUser = user;
         currRole = Roles.valueOf(currUser.getRole().toUpperCase());
         closeTabs();
+    }
+
+    public void showAlert(String header, String content) {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle("Warning");
+        alert.setHeaderText(header);
+        alert.setContentText(content);
+        alert.showAndWait();
     }
 
     public void closeTabs() {

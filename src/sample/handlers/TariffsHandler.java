@@ -62,4 +62,10 @@ public class TariffsHandler {
             alert.showAndWait();
         }
     }
+
+    public void deleteTariff(Tariff tariff) throws SQLException {
+        PreparedStatement ps = con.prepareStatement("DELETE FROM Tariffs WHERE Base_price = ?");
+        ps.setDouble(1, tariff.getBasePrice());
+        ps.executeUpdate();
+    }
 }

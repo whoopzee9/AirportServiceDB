@@ -4,6 +4,7 @@ import javafx.scene.control.Alert;
 import sample.tables.Airline;
 import sample.tables.Flight;
 import sample.tables.Plane;
+import sample.tables.User;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -50,6 +51,12 @@ public class PlanesHandler {
         ps.setInt(3, plane.getBusinessClassSeats());
         ps.setInt(4, plane.getFirstClassSeats());
 
+        ps.executeUpdate();
+    }
+
+    public void deletePlane(Plane plane) throws SQLException {
+        PreparedStatement ps = con.prepareStatement("DELETE FROM Planes WHERE Name = ?");
+        ps.setString(1, plane.getName());
         ps.executeUpdate();
     }
 }

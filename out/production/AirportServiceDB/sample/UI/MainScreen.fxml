@@ -67,6 +67,7 @@
                         </columns>
                     </TableView>
                     <Button layoutX="635.0" layoutY="57.0" mnemonicParsing="false" onAction="#onAddNewUserClicked" prefHeight="36.0" prefWidth="76.0" text="Add New" />
+                    <Button layoutX="624.0" layoutY="128.0" mnemonicParsing="false" onAction="#onDeleteUserClicked" text="Delete selected" />
                 </children></AnchorPane>
         </content>
     </Tab>
@@ -83,6 +84,7 @@
                         </columns>
                     </TableView>
                     <Button fx:id="BAddPlanes" layoutX="635.0" layoutY="57.0" mnemonicParsing="false" onAction="#onAddNewPlaneClicked" prefHeight="36.0" prefWidth="76.0" text="Add New" />
+                    <Button layoutX="624.0" layoutY="128.0" mnemonicParsing="false" onAction="#onDeletePlaneClicked" text="Delete selected" />
                 </children></AnchorPane>
         </content>
     </Tab>
@@ -110,6 +112,7 @@
                         </columns>
                     </TableView>
                     <Button layoutX="635.0" layoutY="57.0" mnemonicParsing="false" onAction="#onAddNewAirlineClicked" prefHeight="36.0" prefWidth="76.0" text="Add New" />
+                    <Button layoutX="624.0" layoutY="128.0" mnemonicParsing="false" onAction="#onDeleteAirlineClicked" text="Delete selected" />
                 </children></AnchorPane>
         </content>
     </Tab>
@@ -137,6 +140,7 @@
                         </columns>
                     </TableView>
                     <Button layoutX="635.0" layoutY="57.0" mnemonicParsing="false" onAction="#onAddNewTariffClicked" prefHeight="36.0" prefWidth="76.0" text="Add New" />
+                    <Button layoutX="624.0" layoutY="128.0" mnemonicParsing="false" onAction="#onDeleteTariffClicked" text="Delete selected" />
                 </children></AnchorPane>
         </content>
     </Tab>
@@ -154,6 +158,11 @@
                         <Font name="System Bold" size="31.0" />
                      </font>
                   </Label>
+                  <Button layoutX="354.0" layoutY="412.0" mnemonicParsing="false" onAction="#onExitClicked" prefHeight="56.0" prefWidth="92.0" text="Exit">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </Button>
                </children></AnchorPane>
         </content>
     </Tab>

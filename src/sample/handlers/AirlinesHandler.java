@@ -48,4 +48,10 @@ public class AirlinesHandler {
 
         ps.executeUpdate();
     }
+
+    public void deleteAirline(Airline airline) throws SQLException {
+        PreparedStatement ps = con.prepareStatement("DELETE FROM Airlines WHERE Name = ?");
+        ps.setString(1, airline.getName());
+        ps.executeUpdate();
+    }
 }

@@ -158,6 +158,11 @@
                         <Font name="System Bold" size="31.0" />
                      </font>
                   </Label>
+                  <Button layoutX="354.0" layoutY="412.0" mnemonicParsing="false" onAction="#onExitClicked" prefHeight="56.0" prefWidth="92.0" text="Exit">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </Button>
                </children></AnchorPane>
         </content>
     </Tab>

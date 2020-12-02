@@ -2,6 +2,7 @@ package sample.handlers;
 
 import javafx.scene.control.Alert;
 import sample.tables.Flight;
+import sample.tables.Ticket;
 import sample.tables.User;
 
 import java.sql.*;
@@ -97,5 +98,11 @@ public class UsersHandler {
             alert.setContentText("You don't have permission to read from users table!");
             alert.showAndWait();
         }
+    }
+
+    public void deleteUser(User user) throws SQLException {
+        PreparedStatement ps = con.prepareStatement("DELETE FROM Users WHERE Login = ?");
+        ps.setString(1, user.getUsername());
+        ps.executeUpdate();
     }
 }

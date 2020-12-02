@@ -19,7 +19,7 @@ public class TicketsHandler {
 
         try {
             Statement statement = con.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT t.Passenger_name, t.BirthDate, t.Passport_number, f.Flight_code, " +
+            ResultSet resultSet = statement.executeQuery("SELECT t.id, t.Passenger_name, t.BirthDate, t.Passport_number, f.Flight_code, " +
                     "t.Seat, c.Name, t.Price, u.Name\n" +
                     "FROM Tickets t\n" +
                     "INNER JOIN Flights f ON f.Id = t.Flight_id \n" +
@@ -27,16 +27,19 @@ public class TicketsHandler {
                     "INNER JOIN Users u ON u.Id = t.Cashier_id");
 
             while (resultSet.next()) {
-                String name = resultSet.getString(1);
-                Date birthDate = resultSet.getDate(2);
-                String passport = resultSet.getString(3);
-                String flightCode = resultSet.getString(4);
-                Integer seat = resultSet.getInt(5);
-                String className = resultSet.getString(6);
-                Double price = resultSet.getDouble(7);
-                String cashierName = resultSet.getString(8);
+                int id = resultSet.getInt(1);
+                String name = resultSet.getString(2);
+                Date birthDate = resultSet.getDate(3);
+                String passport = resultSet.getString(4);
+                String flightCode = resultSet.getString(5);
+                Integer seat = resultSet.getInt(6);
+                String className = resultSet.getString(7);
+                Double price = resultSet.getDouble(8);
+                String cashierName = resultSet.getString(9);
 
-                tickets.add(new Ticket(name, birthDate, passport, flightCode, seat, className, price, cashierName));
+                Ticket ticket = new Ticket(name, birthDate, passport, flightCode, seat, className, price, cashierName);
+                ticket.setId(id);
+                tickets.add(ticket);
             }
         } catch (SQLException e) {
             Alert alert = new Alert(Alert.AlertType.WARNING);
@@ -91,5 +94,11 @@ public class TicketsHandler {
             alert.showAndWait();
         }
         return seats;
+    }
+
+    public void deleteTicket(Ticket ticket) throws SQLException {
+        PreparedStatement ps = con.prepareStatement("DELETE FROM Tickets WHERE id = ?");
+        ps.setInt(1, ticket.getId());
+        ps.executeUpdate();
     }
 }

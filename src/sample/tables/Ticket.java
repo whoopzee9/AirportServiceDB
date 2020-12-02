@@ -3,6 +3,7 @@ package sample.tables;
 import java.sql.Date;
 
 public class Ticket {
+    private int id;
     private String name;
     private Date birthDate;
     private String passport;
@@ -13,6 +14,7 @@ public class Ticket {
     private String cashierName;
 
     public Ticket(String name, Date birthDate, String passport, String flightCode, int seat, String serviceClass, double price, String cashierName) {
+        this.id = 0;
         this.name = name;
         this.birthDate = birthDate;
         this.passport = passport;
@@ -21,6 +23,14 @@ public class Ticket {
         this.serviceClass = serviceClass;
         this.price = price;
         this.cashierName = cashierName;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getName() {
