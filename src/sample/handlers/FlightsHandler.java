@@ -109,4 +109,23 @@ public class FlightsHandler {
         }
         return plane;
     }
+
+    public void updateFlight(Flight flight) {
+        try {
+            PreparedStatement ps = con.prepareStatement("EXEC UpdateFlight ?, ?, ?, ?, ?");
+            ps.setString(1, flight.getFlightCode());
+            ps.setTimestamp(2, flight.getDepartureDate());
+            ps.setTimestamp(3, flight.getArrivalDate());
+            ps.setString(4, flight.getPlaneName());
+            ps.setString(5, flight.getStatus());
+
+            ps.executeUpdate();
+        } catch (SQLException throwables) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Warning");
+            alert.setHeaderText("Request error");
+            alert.setContentText("You don't have permission to read from flight table!");
+            alert.showAndWait();
+        }
+    }
 }

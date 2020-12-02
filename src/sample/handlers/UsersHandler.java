@@ -77,4 +77,25 @@ public class UsersHandler {
         User user = new User(name, date, address, phone, email, role, login);
         return user;
     }
+
+    public void updateUser(User user) {
+        try {
+            PreparedStatement ps = con.prepareStatement("EXEC UpdateUser ?, ?, ?, ?, ?, ?, ?");
+            ps.setString(1, user.getName());
+            ps.setDate(2,user.getBirthDate());
+            ps.setString(3,user.getAddress());
+            ps.setString(4,user.getPhone());
+            ps.setString(5,user.getEmail());
+            ps.setString(6,user.getRole());
+            ps.setString(7,user.getUsername());
+
+            ps.executeUpdate();
+        } catch (SQLException throwables) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Warning");
+            alert.setHeaderText("No permission");
+            alert.setContentText("You don't have permission to read from users table!");
+            alert.showAndWait();
+        }
+    }
 }

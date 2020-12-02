@@ -5,13 +5,18 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.ComboBoxListCell;
+import javafx.scene.control.cell.ComboBoxTableCell;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Callback;
+import javafx.util.StringConverter;
 import sample.handlers.*;
 import sample.tables.*;
 import javafx.fxml.FXML;
@@ -22,9 +27,10 @@ import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.Date;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 public class MainScreenController implements PropertyChangeListener {
 
@@ -34,10 +40,10 @@ public class MainScreenController implements PropertyChangeListener {
     public TableColumn<Flight, String> TCFlightCode;
     public TableColumn<Flight, String> TCDeparture;
     public TableColumn<Flight, String> TCDestination;
-    public TableColumn<Flight, Date> TCDepartureDate;
-    public TableColumn<Flight, Date> TCArrivalDate;
-    public TableColumn<Flight, String> TCPlane;
-    public TableColumn<Flight, String> TCAirline;
+    public TableColumn<Flight, Timestamp> TCDepartureDate;
+    public TableColumn<Flight, Timestamp> TCArrivalDate;
+    public TableColumn<Flight, Plane> TCPlane;
+    public TableColumn<Flight, Airline> TCAirline;
     public TableColumn<Flight, String> TCStatus;
     public Button BAddFlights;
 
@@ -60,7 +66,7 @@ public class MainScreenController implements PropertyChangeListener {
     public TableColumn<User, String> TCUserAddress;
     public TableColumn<User, String> TCUserPhone;
     public TableColumn<User, String> TCUserEmail;
-    public TableColumn<User, String> TCUserRole;
+    public TableColumn<User, Role> TCUserRole;
     public TableColumn<User, String> TCUserLogin;
 
     public Tab TPlanes;
@@ -126,7 +132,7 @@ public class MainScreenController implements PropertyChangeListener {
 
     @FXML
     public void initialize() {
-
+        //Tables init
         TCFlightCode.setCellValueFactory(new PropertyValueFactory<>("flightCode"));
         TCDeparture.setCellValueFactory(new PropertyValueFactory<>("departure"));
         TCDestination.setCellValueFactory(new PropertyValueFactory<>("destination"));
@@ -168,6 +174,102 @@ public class MainScreenController implements PropertyChangeListener {
 
         TCTariffBasePrice.setCellValueFactory(new PropertyValueFactory<>("basePrice"));
 
+        //Editing initialization
+        StringConverter<Timestamp> timestampStringConverter = new StringConverter<Timestamp>() {
+            @Override
+            public String toString(Timestamp object) {
+                if (object == null) {
+                    return null;
+                }
+                return object.toString();
+            }
+
+            @Override
+            public Timestamp fromString(String string) {
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
+                java.util.Date parsedDate;
+                try {
+                    parsedDate = dateFormat.parse(string);
+                } catch (ParseException e) {
+                    Alert alert = new Alert(Alert.AlertType.WARNING);
+                    alert.setTitle("Warning");
+                    alert.setHeaderText("Wrong input");
+                    alert.setContentText("Wrong timestamp!");
+                    alert.showAndWait();
+                    return null;
+                }
+                return new Timestamp(parsedDate.getTime());
+            }
+        };
+
+        StringConverter<Date> dateStringConverter = new StringConverter<Date>() {
+            @Override
+            public String toString(Date object) {
+                if (object == null) {
+                    return null;
+                }
+                return object.toString();
+            }
+
+            @Override
+            public Date fromString(String string) {
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                java.util.Date parsedDate;
+                try {
+                    parsedDate = dateFormat.parse(string);
+                } catch (ParseException e) {
+                    Alert alert = new Alert(Alert.AlertType.WARNING);
+                    alert.setTitle("Warning");
+                    alert.setHeaderText("Wrong input");
+                    alert.setContentText("Wrong date!");
+                    alert.showAndWait();
+                    return null;
+                }
+                return new Date(parsedDate.getTime());
+            }
+        };
+
+        StringConverter<Double> doubleStringConverter = new StringConverter<Double>() {
+            @Override
+            public String toString(Double object) {
+                if (object == null) {
+                    return null;
+                }
+                return object.toString();
+            }
+
+            @Override
+            public Double fromString(String string) {
+                Double value;
+                try {
+                    value = Double.parseDouble(string);
+                } catch (NumberFormatException e) {
+                    Alert alert = new Alert(Alert.AlertType.WARNING);
+                    alert.setTitle("Warning");
+                    alert.setHeaderText("Wrong input");
+                    alert.setContentText("Wrong number!");
+                    alert.showAndWait();
+                    return null;
+                }
+                return value;
+            }
+        };
+        TCDepartureDate.setCellFactory(param -> new TextFieldTableCell<>(timestampStringConverter));
+        TCArrivalDate.setCellFactory(param -> new TextFieldTableCell<>(timestampStringConverter));
+        TCPlaneName.setCellFactory(ComboBoxTableCell.forTableColumn());
+        TCStatus.setCellFactory(TextFieldTableCell.forTableColumn());
+
+        TCUserName.setCellFactory(TextFieldTableCell.forTableColumn());
+        TCUserBirthDate.setCellFactory(param -> new TextFieldTableCell<>(dateStringConverter));
+        TCUserAddress.setCellFactory(TextFieldTableCell.forTableColumn());
+        TCUserPhone.setCellFactory(TextFieldTableCell.forTableColumn());
+        TCUserEmail.setCellFactory(TextFieldTableCell.forTableColumn());
+
+        TCClassMultiplier.setCellFactory(param -> new TextFieldTableCell<>(doubleStringConverter));
+
+        TCTariffBasePrice.setCellFactory(param -> new TextFieldTableCell<>(doubleStringConverter));
+
+        //Tab updating
         TFlights.setOnSelectionChanged(event -> {
             if (!TFlights.isSelected()) {
                 return;
@@ -177,6 +279,7 @@ public class MainScreenController implements PropertyChangeListener {
             if (!oldFlight.equals(flights)) {
                 TVFlightsTable.setItems(flights);
             }
+            TCPlane.setCellFactory(param -> new ComboBoxTableCell<>(FXCollections.observableArrayList(planesHandler.getPlanes())));
         });
 
         TUsers.setOnSelectionChanged(event -> {
@@ -397,6 +500,181 @@ public class MainScreenController implements PropertyChangeListener {
         }
     }
 
+    public void onDepartureDateEditCommit(TableColumn.CellEditEvent<Flight, Timestamp> event) {
+        TablePosition<Flight, Timestamp> pos = event.getTablePosition();
+
+        Timestamp newTimestamp = event.getNewValue();
+        int row = pos.getRow();
+        Flight flight = event.getTableView().getItems().get(row);
+        if (newTimestamp == null) {
+            event.getTableView().getItems().set(row, flight);
+            return;
+        }
+        flight.setDepartureDate(newTimestamp);
+
+        flightsHandler.updateFlight(flight);
+    }
+
+    public void onArrivalDateEditCommit(TableColumn.CellEditEvent<Flight, Timestamp> event) {
+        onDepartureDateEditCommit(event);
+    }
+
+    public void onPlaneNameEditCommit(TableColumn.CellEditEvent<Flight, Plane> event) {
+        TablePosition<Flight, Plane> pos = event.getTablePosition();
+
+        Plane plane = event.getNewValue();
+        int row = pos.getRow();
+        Flight flight = event.getTableView().getItems().get(row);
+        if (plane == null) {
+            event.getTableView().getItems().set(row, flight);
+            return;
+        }
+        flight.setPlaneName(plane.getName());
+
+        flightsHandler.updateFlight(flight);
+    }
+
+    public void onStatusEditCommit(TableColumn.CellEditEvent<Flight, String> event) {
+        TablePosition<Flight, String> pos = event.getTablePosition();
+
+        String status = event.getNewValue();
+        int row = pos.getRow();
+        Flight flight = event.getTableView().getItems().get(row);
+        if (status.isEmpty()) {
+            event.getTableView().getItems().set(row, flight);
+            return;
+        }
+        flight.setStatus(status);
+
+        flightsHandler.updateFlight(flight);
+    }
+
+    public void onUserNameEditCommit(TableColumn.CellEditEvent<User, String> event) {
+        TablePosition<User, String> pos = event.getTablePosition();
+
+        String name = event.getNewValue();
+        int row = pos.getRow();
+        User user = event.getTableView().getItems().get(row);
+        if (name.isEmpty()) {
+            event.getTableView().getItems().set(row, user);
+            return;
+        }
+        user.setName(name);
+
+        usersHandler.updateUser(user);
+    }
+
+    public void onUserBirthDateEditCommit(TableColumn.CellEditEvent<User, Date> event) {
+        TablePosition<User, Date> pos = event.getTablePosition();
+
+        Date date = event.getNewValue();
+        int row = pos.getRow();
+        User user = event.getTableView().getItems().get(row);
+        if (date == null) {
+            event.getTableView().getItems().set(row, user);
+            return;
+        }
+        user.setBirthDate(date);
+
+        usersHandler.updateUser(user);
+    }
+
+    public void onUserAddressEditCommit(TableColumn.CellEditEvent<User, String> event) {
+        TablePosition<User, String> pos = event.getTablePosition();
+
+        String address = event.getNewValue();
+        int row = pos.getRow();
+        User user = event.getTableView().getItems().get(row);
+        if (address.isEmpty()) {
+            event.getTableView().getItems().set(row, user);
+            return;
+        }
+        user.setAddress(address);
+
+        usersHandler.updateUser(user);
+    }
+
+    public void onUserPhoneEditCommit(TableColumn.CellEditEvent<User, String> event) {
+        TablePosition<User, String> pos = event.getTablePosition();
+
+        String phone = event.getNewValue();
+        int row = pos.getRow();
+        User user = event.getTableView().getItems().get(row);
+        if (phone.isEmpty()) {
+            event.getTableView().getItems().set(row, user);
+            return;
+        }
+        user.setPhone(phone);
+
+        usersHandler.updateUser(user);
+    }
+
+    public void onUserEmailEditCommit(TableColumn.CellEditEvent<User, String> event) {
+        TablePosition<User, String> pos = event.getTablePosition();
+
+        String email = event.getNewValue();
+        int row = pos.getRow();
+        User user = event.getTableView().getItems().get(row);
+        if (email.isEmpty()) {
+            event.getTableView().getItems().set(row, user);
+            return;
+        }
+        user.setEmail(email);
+
+        usersHandler.updateUser(user);
+    }
+
+    public void onUserRoleEditCommit(TableColumn.CellEditEvent<User, Role> event) {
+        TablePosition<User, Role> pos = event.getTablePosition();
+
+        Role role = event.getNewValue();
+        int row = pos.getRow();
+        User user = event.getTableView().getItems().get(row);
+        if (role == null) {
+            event.getTableView().getItems().set(row, user);
+            return;
+        }
+        user.setRole(role.getName());
+
+        usersHandler.updateUser(user);
+    }
+
+    public void onClassMultiplierEditCommit(TableColumn.CellEditEvent<ServiceClass, Double> event) {
+        TablePosition<ServiceClass, Double> pos = event.getTablePosition();
+
+        Double multiplier = event.getNewValue();
+        int row = pos.getRow();
+        ServiceClass serviceClass = event.getTableView().getItems().get(row);
+        if (multiplier == null || multiplier == 0) {
+            event.getTableView().getItems().set(row, serviceClass);
+            return;
+        }
+        serviceClass.setMultiplier(multiplier);
+
+        serviceClassesHandler.updateClass(serviceClass);
+    }
+
+    public void onBasePriceEditCommit(TableColumn.CellEditEvent<Tariff, Double> event) {
+        TablePosition<Tariff, Double> pos = event.getTablePosition();
+
+        Double newPrice = event.getNewValue();
+        int row = pos.getRow();
+        Tariff oldTariff = event.getTableView().getItems().get(row);
+        if (newPrice == null || newPrice == 0) {
+            event.getTableView().getItems().set(row, oldTariff);
+            return;
+        }
+        Tariff newTariff = new Tariff(newPrice);
+
+        tariffsHandler.updateTariff(newTariff, oldTariff);
+    }
+
+
+    public void onDeleteTicketClicked(ActionEvent event) {
+        System.out.println(TVTicketsTable.getSelectionModel().getFocusedIndex());
+        System.out.println(TVTicketsTable.getSelectionModel().isSelected(0));
+    }
+
     public void setConnection(Connection con) {
         this.con = con;
         flightsHandler = new FlightsHandler(con);
@@ -411,6 +689,8 @@ public class MainScreenController implements PropertyChangeListener {
         ObservableList<Flight> flights = FXCollections.observableArrayList(flightsHandler.getFlights());
         TVFlightsTable.setItems(flights);
 
+        TCUserRole.setCellFactory(ComboBoxTableCell.forTableColumn(FXCollections.observableArrayList(rolesHandler.getRoles())));
+        TCPlane.setCellFactory(param -> new ComboBoxTableCell<>(FXCollections.observableArrayList(planesHandler.getPlanes())));
     }
 
     public void setUser(User user) {
@@ -424,6 +704,8 @@ public class MainScreenController implements PropertyChangeListener {
             case ADMIN -> {
                 BAddFlights.setVisible(false);
                 BAddTickets.setVisible(false);
+                TVTicketsTable.setEditable(false);
+                TVFlightsTable.setEditable(false);
             }
             case CASHIER -> {
                 TPTabPane.getTabs().remove(TUsers);
@@ -433,7 +715,7 @@ public class MainScreenController implements PropertyChangeListener {
                 TPTabPane.getTabs().remove(TPlanes);
                 TPTabPane.getTabs().remove(TAirlines);
                 BAddFlights.setVisible(false);
-
+                TVFlightsTable.setEditable(false);
             }
             case DISPATCHER -> {
                 TPTabPane.getTabs().remove(TUsers);

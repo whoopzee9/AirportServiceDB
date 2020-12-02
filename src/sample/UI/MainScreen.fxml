@@ -10,16 +10,16 @@
       <content>
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                <children>
-                  <TableView fx:id="TVFlightsTable" layoutX="16.0" layoutY="172.0" prefHeight="378.0" prefWidth="768.0">
+                  <TableView fx:id="TVFlightsTable" editable="true" layoutX="16.0" layoutY="172.0" prefHeight="378.0" prefWidth="768.0">
                     <columns>
                       <TableColumn fx:id="TCFlightCode" prefWidth="72.39999198913574" text="Flight code" />
                       <TableColumn fx:id="TCDeparture" prefWidth="105.80004119873047" text="Departure" />
                         <TableColumn fx:id="TCDestination" prefWidth="91.79998779296875" text="Destination" />
-                        <TableColumn fx:id="TCDepartureDate" prefWidth="135.19998168945312" text="Departure date" />
-                        <TableColumn fx:id="TCArrivalDate" prefWidth="127.19998168945312" text="Arrival date" />
-                        <TableColumn fx:id="TCPlane" prefWidth="58.4000244140625" text="Plane" />
+                        <TableColumn fx:id="TCDepartureDate" onEditCommit="#onDepartureDateEditCommit" prefWidth="135.19998168945312" text="Departure date" />
+                        <TableColumn fx:id="TCArrivalDate" onEditCommit="#onArrivalDateEditCommit" prefWidth="127.19998168945312" text="Arrival date" />
+                        <TableColumn fx:id="TCPlane" onEditCommit="#onPlaneNameEditCommit" prefWidth="58.4000244140625" text="Plane" />
                         <TableColumn fx:id="TCAirline" prefWidth="60.4000244140625" text="Airline" />
-                        <TableColumn fx:id="TCStatus" prefWidth="120.199951171875" text="Status" />
+                        <TableColumn fx:id="TCStatus" onEditCommit="#onStatusEditCommit" prefWidth="120.199951171875" text="Status" />
                     </columns>
                   </TableView>
                   <DatePicker layoutX="101.0" layoutY="62.0" prefHeight="26.0" prefWidth="150.0" />
@@ -34,7 +34,7 @@
       <content>
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                <children>
-                   <TableView fx:id="TVTicketsTable" layoutX="22.0" layoutY="172.0" prefHeight="378.0" prefWidth="733.0">
+                   <TableView fx:id="TVTicketsTable" editable="true" layoutX="22.0" layoutY="172.0" prefHeight="378.0" prefWidth="733.0">
                        <columns>
                            <TableColumn fx:id="TCPassengerName" prefWidth="171.80002212524414" text="Name" />
                            <TableColumn fx:id="TCPassengerBirthDate" prefWidth="84.79997253417969" text="Birth date" />
@@ -47,6 +47,7 @@
                        </columns>
                    </TableView>
                   <Button fx:id="BAddTickets" layoutX="635.0" layoutY="57.0" mnemonicParsing="false" onAction="#onAddNewTicketClicked" prefHeight="36.0" prefWidth="76.0" text="Add New" />
+                  <Button layoutX="624.0" layoutY="128.0" mnemonicParsing="false" onAction="#onDeleteTicketClicked" text="Delete selected" />
                </children></AnchorPane>
       </content>
     </Tab>
@@ -54,18 +55,19 @@
         <content>
             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                 <children>
-                    <TableView fx:id="TVUsersTable" layoutX="22.0" layoutY="172.0" prefHeight="378.0" prefWidth="762.0">
+                    <TableView fx:id="TVUsersTable" editable="true" layoutX="22.0" layoutY="172.0" prefHeight="378.0" prefWidth="762.0">
                         <columns>
-                            <TableColumn fx:id="TCUserName" prefWidth="171.80002212524414" text="Name" />
-                            <TableColumn fx:id="TCUserBirthDate" prefWidth="93.80001831054688" text="Birth date" />
-                            <TableColumn fx:id="TCUserAddress" prefWidth="115.60000610351562" text="Address" />
-                            <TableColumn fx:id="TCUserPhone" prefWidth="74.0" text="Phone" />
-                            <TableColumn fx:id="TCUserEmail" prefWidth="100.99996948242188" text="Email" />
-                            <TableColumn fx:id="TCUserRole" minWidth="0.0" prefWidth="72.800048828125" text="Role" />
+                            <TableColumn fx:id="TCUserName" onEditCommit="#onUserNameEditCommit" prefWidth="171.80002212524414" text="Name" />
+                            <TableColumn fx:id="TCUserBirthDate" onEditCommit="#onUserBirthDateEditCommit" prefWidth="93.80001831054688" text="Birth date" />
+                            <TableColumn fx:id="TCUserAddress" onEditCommit="#onUserAddressEditCommit" prefWidth="115.60000610351562" text="Address" />
+                            <TableColumn fx:id="TCUserPhone" onEditCommit="#onUserPhoneEditCommit" prefWidth="74.0" text="Phone" />
+                            <TableColumn fx:id="TCUserEmail" onEditCommit="#onUserEmailEditCommit" prefWidth="100.99996948242188" text="Email" />
+                            <TableColumn fx:id="TCUserRole" minWidth="0.0" onEditCommit="#onUserRoleEditCommit" prefWidth="72.800048828125" text="Role" />
                         <TableColumn fx:id="TCUserLogin" prefWidth="91.20001220703125" text="Username" />
                         </columns>
                     </TableView>
                     <Button layoutX="635.0" layoutY="57.0" mnemonicParsing="false" onAction="#onAddNewUserClicked" prefHeight="36.0" prefWidth="76.0" text="Add New" />
+                    <Button layoutX="624.0" layoutY="128.0" mnemonicParsing="false" onAction="#onDeleteUserClicked" text="Delete selected" />
                 </children></AnchorPane>
         </content>
     </Tab>
@@ -73,7 +75,7 @@
         <content>
             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                 <children>
-                    <TableView fx:id="TVPlanesTable" layoutX="22.0" layoutY="172.0" prefHeight="378.0" prefWidth="414.0">
+                    <TableView fx:id="TVPlanesTable" editable="true" layoutX="22.0" layoutY="172.0" prefHeight="378.0" prefWidth="414.0">
                         <columns>
                             <TableColumn fx:id="TCPlaneName" prefWidth="97.00000381469727" text="Name" />
                             <TableColumn fx:id="TCTotalSeats" prefWidth="97.60000610351562" text="Total seats" />
@@ -82,6 +84,7 @@
                         </columns>
                     </TableView>
                     <Button fx:id="BAddPlanes" layoutX="635.0" layoutY="57.0" mnemonicParsing="false" onAction="#onAddNewPlaneClicked" prefHeight="36.0" prefWidth="76.0" text="Add New" />
+                    <Button layoutX="624.0" layoutY="128.0" mnemonicParsing="false" onAction="#onDeletePlaneClicked" text="Delete selected" />
                 </children></AnchorPane>
         </content>
     </Tab>
@@ -109,6 +112,7 @@
                         </columns>
                     </TableView>
                     <Button layoutX="635.0" layoutY="57.0" mnemonicParsing="false" onAction="#onAddNewAirlineClicked" prefHeight="36.0" prefWidth="76.0" text="Add New" />
+                    <Button layoutX="624.0" layoutY="128.0" mnemonicParsing="false" onAction="#onDeleteAirlineClicked" text="Delete selected" />
                 </children></AnchorPane>
         </content>
     </Tab>
@@ -116,10 +120,10 @@
         <content>
             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                 <children>
-                    <TableView fx:id="TVClassesTable" layoutX="22.0" layoutY="172.0" prefHeight="378.0" prefWidth="253.0">
+                    <TableView fx:id="TVClassesTable" editable="true" layoutX="22.0" layoutY="172.0" prefHeight="378.0" prefWidth="253.0">
                         <columns>
                             <TableColumn fx:id="TCClassName" prefWidth="97.00000381469727" text="Name" />
-                            <TableColumn fx:id="TCClassMultiplier" prefWidth="130.4000015258789" text="Multiplier" />
+                            <TableColumn fx:id="TCClassMultiplier" onEditCommit="#onClassMultiplierEditCommit" prefWidth="130.4000015258789" text="Multiplier" />
 
                         </columns>
                     </TableView>
@@ -130,12 +134,13 @@
         <content>
             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                 <children>
-                    <TableView fx:id="TVTariffsTable" layoutX="325.0" layoutY="175.0" prefHeight="378.0" prefWidth="129.0">
+                    <TableView fx:id="TVTariffsTable" editable="true" layoutX="325.0" layoutY="175.0" prefHeight="378.0" prefWidth="129.0">
                         <columns>
-                            <TableColumn fx:id="TCTariffBasePrice" prefWidth="97.00000381469727" text="Base price" />
+                            <TableColumn fx:id="TCTariffBasePrice" onEditCommit="#onBasePriceEditCommit" prefWidth="97.00000381469727" text="Base price" />
                         </columns>
                     </TableView>
                     <Button layoutX="635.0" layoutY="57.0" mnemonicParsing="false" onAction="#onAddNewTariffClicked" prefHeight="36.0" prefWidth="76.0" text="Add New" />
+                    <Button layoutX="624.0" layoutY="128.0" mnemonicParsing="false" onAction="#onDeleteTariffClicked" text="Delete selected" />
                 </children></AnchorPane>
         </content>
     </Tab>

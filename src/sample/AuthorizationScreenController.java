@@ -49,7 +49,7 @@ public class AuthorizationScreenController {
             contr.setUser(user);
 
             stage = new Stage();
-            stage.initModality(Modality.APPLICATION_MODAL);
+            //stage.initModality(Modality.APPLICATION_MODAL);
             stage.setTitle("Airport Service");
             stage.setScene(new Scene(root, 800, 600));
             stage.show();

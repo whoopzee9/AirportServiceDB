@@ -45,4 +45,21 @@ public class TariffsHandler {
 
         ps.executeUpdate();
     }
+
+    public void updateTariff(Tariff newTariff, Tariff oldTariff) {
+        try {
+            PreparedStatement ps = con.prepareStatement("UPDATE Tariffs " +
+                    "SET Base_price = ? " +
+                    "WHERE Base_price = ?");
+            ps.setDouble(1, newTariff.getBasePrice());
+            ps.setDouble(2, oldTariff.getBasePrice());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Warning");
+            alert.setHeaderText("No permission");
+            alert.setContentText("You don't have permission to read from tariffs table!");
+            alert.showAndWait();
+        }
+    }
 }
