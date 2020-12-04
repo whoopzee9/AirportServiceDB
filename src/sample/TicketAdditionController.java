@@ -57,7 +57,7 @@ public class TicketAdditionController {
     public void initialize() {
         TFPrice.setText("0");
         CBFlight.setOnMouseClicked(event -> {
-            ObservableList<Flight> flights = FXCollections.observableArrayList(flightsHandler.getFlights());
+            ObservableList<Flight> flights = FXCollections.observableArrayList(flightsHandler.getFlights(true));
             ObservableList<Flight> oldFlights = CBFlight.getItems();
             if (!flights.equals(oldFlights)) {
                 CBFlight.setItems(flights);

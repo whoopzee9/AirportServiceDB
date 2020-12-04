@@ -10,23 +10,29 @@
       <content>
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                <children>
-                  <TableView fx:id="TVFlightsTable" editable="true" layoutX="16.0" layoutY="172.0" prefHeight="378.0" prefWidth="768.0">
+                  <TableView fx:id="TVFlightsTable" editable="true" layoutX="11.0" layoutY="172.0" prefHeight="378.0" prefWidth="781.0">
                     <columns>
-                      <TableColumn fx:id="TCFlightCode" prefWidth="72.39999198913574" text="Flight code" />
-                      <TableColumn fx:id="TCDeparture" prefWidth="105.80004119873047" text="Departure" />
-                        <TableColumn fx:id="TCDestination" prefWidth="91.79998779296875" text="Destination" />
-                        <TableColumn fx:id="TCDepartureDate" onEditCommit="#onDepartureDateEditCommit" prefWidth="135.19998168945312" text="Departure date" />
-                        <TableColumn fx:id="TCArrivalDate" onEditCommit="#onArrivalDateEditCommit" prefWidth="127.19998168945312" text="Arrival date" />
-                        <TableColumn fx:id="TCPlane" onEditCommit="#onPlaneNameEditCommit" prefWidth="58.4000244140625" text="Plane" />
-                        <TableColumn fx:id="TCAirline" prefWidth="60.4000244140625" text="Airline" />
-                        <TableColumn fx:id="TCStatus" onEditCommit="#onStatusEditCommit" prefWidth="120.199951171875" text="Status" />
+                      <TableColumn fx:id="TCFlightCode" prefWidth="67.19997882843018" text="Flight code" />
+                      <TableColumn fx:id="TCDeparture" prefWidth="107.20001220703125" text="Departure" />
+                        <TableColumn fx:id="TCDestination" prefWidth="93.40000915527344" text="Destination" />
+                        <TableColumn fx:id="TCDepartureDate" onEditCommit="#onDepartureDateEditCommit" prefWidth="134.80001831054688" text="Departure date" />
+                        <TableColumn fx:id="TCArrivalDate" onEditCommit="#onArrivalDateEditCommit" prefWidth="127.60003662109375" text="Arrival date" />
+                        <TableColumn fx:id="TCPlane" onEditCommit="#onPlaneNameEditCommit" prefWidth="58.5999755859375" text="Plane" />
+                        <TableColumn fx:id="TCAirline" prefWidth="63.0" text="Airline" />
+                        <TableColumn fx:id="TCStatus" onEditCommit="#onStatusEditCommit" prefWidth="70.5999755859375" text="Status" />
+                        <TableColumn fx:id="TCFlightPrice" prefWidth="54.199951171875" text="Price" />
                     </columns>
                   </TableView>
-                  <DatePicker layoutX="101.0" layoutY="62.0" prefHeight="26.0" prefWidth="150.0" />
-                  <DatePicker layoutX="101.0" layoutY="103.0" prefHeight="26.0" prefWidth="149.0" />
-                  <Button layoutX="314.0" layoutY="62.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="48.0" text="Sort" />
+                  <DatePicker fx:id="DPDepartureFrom" layoutX="298.0" layoutY="62.0" prefHeight="26.0" prefWidth="150.0" />
+                  <DatePicker fx:id="DPDepartureTo" layoutX="299.0" layoutY="103.0" prefHeight="26.0" prefWidth="149.0" />
+                  <Button layoutX="475.0" layoutY="62.0" mnemonicParsing="false" onAction="#onFlightsSortClicked" prefHeight="26.0" prefWidth="48.0" text="Sort" />
                   <Button fx:id="BAddFlights" layoutX="635.0" layoutY="57.0" mnemonicParsing="false" onAction="#onAddNewFlightClicked" prefHeight="36.0" prefWidth="76.0" text="Add New" />
-                  <ComboBox layoutX="101.0" layoutY="25.0" prefWidth="150.0" />
+                  <ComboBox fx:id="CBFlightsSort" layoutX="16.0" layoutY="24.0" onAction="#CBFlightsOnAction" prefWidth="150.0" />
+                  <TextField fx:id="TFFlightsCustom" layoutX="299.0" layoutY="24.0" />
+                  <Label fx:id="LFlightsCustom" layoutX="221.0" layoutY="28.0" text="Custom" />
+                  <Label fx:id="LDepartureFrom" layoutX="200.0" layoutY="66.0" text="Departure from" />
+                  <Label fx:id="LDepartureTo" layoutX="207.0" layoutY="107.0" text="Departure to" />
+                  <ComboBox fx:id="CBFlightsDisplay" layoutX="16.0" layoutY="104.0" prefWidth="150.0" />
                </children></AnchorPane>
       </content>
     </Tab>

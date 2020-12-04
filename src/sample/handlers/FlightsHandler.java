@@ -14,8 +14,14 @@ public class FlightsHandler {
         this.con = con;
     }
 
-    public ArrayList<Flight> getFlights() {
+    public ArrayList<Flight> getFlights(boolean isRelevant) {
         ArrayList<Flight> flights = new ArrayList<>();
+
+        String added = "";
+        if (isRelevant) {
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            added = "WHERE f.Departure_date <= '" + timestamp.toString() + "'";
+        }
 
         try {
             Statement statement = con.createStatement();
@@ -23,21 +29,11 @@ public class FlightsHandler {
                     "FROM Flights f\n" +
                     "INNER JOIN Airlines a ON a.Id = f.Airline_id \n" +
                     "INNER JOIN Planes p ON p.id = f.Plane_id\n" +
-                    "INNER JOIN Tariffs t ON t.Id = f.Tariff_id");
+                    "INNER JOIN Tariffs t ON t.Id = f.Tariff_id\n" + added);
 
-            while (resultSet.next()) {
-                String code = resultSet.getString(1);
-                String depart = resultSet.getString(2);
-                String dest = resultSet.getString(3);
-                Timestamp depDate = resultSet.getTimestamp(4);
-                Timestamp arrDate = resultSet.getTimestamp(5);
-                String plane = resultSet.getString(6);
-                String airline = resultSet.getString(7);
-                String status = resultSet.getString(8);
-                Double basePrice = resultSet.getDouble(9);
-                flights.add(new Flight(code, depart, dest, depDate, arrDate, plane, airline, status, basePrice));
-            }
+            flights = getFlightListFromResultSet(resultSet);
         } catch (SQLException e) {
+            e.printStackTrace();
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Warning");
             alert.setHeaderText("No permission");
@@ -127,5 +123,147 @@ public class FlightsHandler {
             alert.setContentText("You don't have permission to read from flight table!");
             alert.showAndWait();
         }
+    }
+
+    public ArrayList<Flight> getSortedByDestinationAndDates(String destination, Timestamp departureFrom, Timestamp departureTo, boolean isRelevant) {
+        ArrayList<Flight> flights = new ArrayList<>();
+
+        String added = "";
+        if (isRelevant) {
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            added = " AND Departure >= '" + timestamp.toString() + "'";
+        }
+
+        try {
+            PreparedStatement ps = con.prepareStatement("SELECT f.Flight_code, f.Departure, f.Destination, f.Departure_date, f.Arrival_date, p.Name, a.Name, f.Status, t.Base_price\n" +
+                    "FROM Flights f\n" +
+                    "INNER JOIN Airlines a ON a.Id = f.Airline_id \n" +
+                    "INNER JOIN Planes p ON p.id = f.Plane_id\n" +
+                    "INNER JOIN Tariffs t ON t.Id = f.Tariff_id " +
+                    "WHERE Destination = ? AND (Departure_date BETWEEN ? AND ?)" + added + " ORDER BY Departure_date");
+            ps.setString(1, destination);
+            ps.setTimestamp(2, departureFrom);
+            ps.setTimestamp(3, departureTo);
+            ResultSet resultSet = ps.executeQuery();
+
+            flights = getFlightListFromResultSet(resultSet);
+        } catch (SQLException e) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Warning");
+            alert.setHeaderText("No permission");
+            alert.setContentText("You don't have permission to read from flight table!");
+            alert.showAndWait();
+        }
+
+        return flights;
+    }
+
+    public ArrayList<Flight> getSortedByAirline(String currAirline, boolean isRelevant) {
+        ArrayList<Flight> flights = new ArrayList<>();
+
+        String added = "";
+        if (isRelevant) {
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            added = " AND Departure >= '" + timestamp.toString() + "'";
+        }
+
+        try {
+            PreparedStatement ps = con.prepareStatement("SELECT f.Flight_code, f.Departure, f.Destination, f.Departure_date, f.Arrival_date, p.Name, a.Name, f.Status, t.Base_price\n" +
+                    "FROM Flights f\n" +
+                    "INNER JOIN Airlines a ON a.Id = f.Airline_id \n" +
+                    "INNER JOIN Planes p ON p.id = f.Plane_id\n" +
+                    "INNER JOIN Tariffs t ON t.Id = f.Tariff_id " +
+                    "WHERE a.Name = ? " + added);
+            ps.setString(1, currAirline);
+            ResultSet resultSet = ps.executeQuery();
+
+            flights = getFlightListFromResultSet(resultSet);
+        } catch (SQLException e) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Warning");
+            alert.setHeaderText("No permission");
+            alert.setContentText("You don't have permission to read from flight table!");
+            alert.showAndWait();
+        }
+
+        return flights;
+    }
+
+    public ArrayList<Flight> getSortedByClassesSeats(boolean isRelevant) {
+        ArrayList<Flight> flights = new ArrayList<>();
+
+        String added = "";
+        if (isRelevant) {
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            added = " AND Departure >= '" + timestamp.toString() + "'";
+        }
+
+        try {
+            Statement statement = con.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT f.Flight_code, f.Departure, f.Destination, f.Departure_date, f.Arrival_date, p.Name, a.Name, f.Status, t.Base_price\n" +
+                    "FROM Flights f\n" +
+                    "INNER JOIN Airlines a ON a.Id = f.Airline_id \n" +
+                    "INNER JOIN Planes p ON p.id = f.Plane_id\n" +
+                    "INNER JOIN Tariffs t ON t.Id = f.Tariff_id " +
+                    "WHERE p.Business_class_seats != 0 and p.First_class_seats != 0 " + added);
+
+            flights = getFlightListFromResultSet(resultSet);
+        } catch (SQLException e) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Warning");
+            alert.setHeaderText("No permission");
+            alert.setContentText("You don't have permission to read from flight table!");
+            alert.showAndWait();
+        }
+
+        return flights;
+    }
+
+    public ArrayList<Flight> getSortedByPrice(double price, boolean isRelevant) {
+        ArrayList<Flight> flights = new ArrayList<>();
+
+        String added = "";
+        if (isRelevant) {
+            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+            added = " AND Departure >= '" + timestamp.toString() + "'";
+        }
+
+        try {
+            PreparedStatement ps = con.prepareStatement("SELECT f.Flight_code, f.Departure, f.Destination, f.Departure_date, f.Arrival_date, p.Name, a.Name, f.Status, t.Base_price\n" +
+                    "FROM Flights f\n" +
+                    "INNER JOIN Airlines a ON a.Id = f.Airline_id \n" +
+                    "INNER JOIN Planes p ON p.id = f.Plane_id\n" +
+                    "INNER JOIN Tariffs t ON t.Id = f.Tariff_id " +
+                    "WHERE t.Base_price <= ? " + added);
+            ps.setDouble(1, price);
+            ResultSet resultSet = ps.executeQuery();
+
+            flights = getFlightListFromResultSet(resultSet);
+        } catch (SQLException e) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Warning");
+            alert.setHeaderText("No permission");
+            alert.setContentText("You don't have permission to read from flight table!");
+            alert.showAndWait();
+        }
+
+        return flights;
+    }
+
+    private ArrayList<Flight> getFlightListFromResultSet(ResultSet resultSet) throws SQLException {
+        ArrayList<Flight> flights = new ArrayList<>();
+        while (resultSet.next()) {
+            String code = resultSet.getString(1);
+            String depart = resultSet.getString(2);
+            String dest = resultSet.getString(3);
+            Timestamp depDate = resultSet.getTimestamp(4);
+            Timestamp arrDate = resultSet.getTimestamp(5);
+            String plane = resultSet.getString(6);
+            String airline = resultSet.getString(7);
+            String status = resultSet.getString(8);
+            Double basePrice = resultSet.getDouble(9);
+            flights.add(new Flight(code, depart, dest, depDate, arrDate, plane, airline, status, basePrice));
+        }
+        return flights;
     }
 }

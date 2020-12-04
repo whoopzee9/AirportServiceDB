@@ -3,19 +3,14 @@ package sample;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.ComboBoxListCell;
 import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 import javafx.util.StringConverter;
 import sample.handlers.*;
 import sample.tables.*;
@@ -28,6 +23,7 @@ import java.io.IOException;
 import java.sql.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 
 public class MainScreenController implements PropertyChangeListener {
 
@@ -42,7 +38,16 @@ public class MainScreenController implements PropertyChangeListener {
     public TableColumn<Flight, Plane> TCPlane;
     public TableColumn<Flight, Airline> TCAirline;
     public TableColumn<Flight, String> TCStatus;
+    public TableColumn<Flight, Double> TCFlightPrice;
     public Button BAddFlights;
+    public DatePicker DPDepartureFrom;
+    public DatePicker DPDepartureTo;
+    public ComboBox<String> CBFlightsSort;
+    public ComboBox<String> CBFlightsDisplay;
+    public TextField TFFlightsCustom;
+    public Label LFlightsCustom;
+    public Label LDepartureFrom;
+    public Label LDepartureTo;
 
     public Tab TTickets;
     public TableView<Ticket> TVTicketsTable;
@@ -138,6 +143,7 @@ public class MainScreenController implements PropertyChangeListener {
         TCPlane.setCellValueFactory(new PropertyValueFactory<>("planeName"));
         TCAirline.setCellValueFactory(new PropertyValueFactory<>("airlineName"));
         TCStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
+        TCFlightPrice.setCellValueFactory(new PropertyValueFactory<>("basePrice"));
 
         TCPassengerName.setCellValueFactory(new PropertyValueFactory<>("name"));
         TCPassengerBirthDate.setCellValueFactory(new PropertyValueFactory<>("birthDate"));
@@ -170,6 +176,27 @@ public class MainScreenController implements PropertyChangeListener {
         TCClassMultiplier.setCellValueFactory(new PropertyValueFactory<>("multiplier"));
 
         TCTariffBasePrice.setCellValueFactory(new PropertyValueFactory<>("basePrice"));
+
+        ObservableList<String> list = FXCollections.observableArrayList();
+        list.add("none");
+        list.add("Destination and departure dates");
+        list.add("specific airline");
+        list.add("flights with first and business class");
+        list.add("lower base price");
+        CBFlightsSort.setItems(list);
+        CBFlightsSort.getSelectionModel().select(0);
+        DPDepartureFrom.setVisible(false);
+        DPDepartureTo.setVisible(false);
+        LDepartureFrom.setVisible(false);
+        LDepartureTo.setVisible(false);
+        TFFlightsCustom.setVisible(false);
+        LFlightsCustom.setVisible(false);
+
+        list = FXCollections.observableArrayList();
+        list.add("Display all");
+        list.add("Display relevant");
+        CBFlightsDisplay.setItems(list);
+        CBFlightsDisplay.getSelectionModel().select(0);
 
         //Editing initialization
         StringConverter<Timestamp> timestampStringConverter = new StringConverter<Timestamp>() {
@@ -259,11 +286,12 @@ public class MainScreenController implements PropertyChangeListener {
             if (!TFlights.isSelected()) {
                 return;
             }
-            ObservableList<Flight> flights = FXCollections.observableArrayList(flightsHandler.getFlights());
+            ObservableList<Flight> flights = FXCollections.observableArrayList(flightsHandler.getFlights(false));
             ObservableList<Flight> oldFlight = TVFlightsTable.getItems();
             if (!oldFlight.equals(flights)) {
                 TVFlightsTable.setItems(flights);
             }
+            CBFlightsDisplay.getSelectionModel().select(0);
             TCPlane.setCellFactory(param -> new ComboBoxTableCell<>(FXCollections.observableArrayList(planesHandler.getPlanes())));
         });
 
@@ -741,6 +769,111 @@ public class MainScreenController implements PropertyChangeListener {
         }
     }
 
+    //SORTING HANDLERS----------------------------------------------------------------
+    public void CBFlightsOnAction(ActionEvent event) {
+        int index = CBFlightsSort.getSelectionModel().getSelectedIndex();
+        DPDepartureFrom.setVisible(false);
+        DPDepartureTo.setVisible(false);
+        LDepartureFrom.setVisible(false);
+        LDepartureTo.setVisible(false);
+        switch (index) {
+            case 0, 3 -> {      //none     //flights with first and business class
+                TFFlightsCustom.setVisible(false);
+                LFlightsCustom.setVisible(false);
+            }
+            case 1 -> {      //Destination and departure dates
+                DPDepartureFrom.setVisible(true);
+                DPDepartureTo.setVisible(true);
+                TFFlightsCustom.setVisible(true);
+                LFlightsCustom.setVisible(true);
+                LFlightsCustom.setText("Destination");
+                LDepartureFrom.setVisible(true);
+                LDepartureTo.setVisible(true);
+            }
+            case 2 -> {      //specific airline
+                TFFlightsCustom.setVisible(true);
+                LFlightsCustom.setVisible(true);
+                LFlightsCustom.setText("Airline");
+            }
+            case 4 -> {      //lower base price
+                TFFlightsCustom.setVisible(true);
+                LFlightsCustom.setVisible(true);
+                LFlightsCustom.setText("Base price");
+            }
+            default -> {
+
+            }
+        }
+    }
+
+    public void onFlightsSortClicked(ActionEvent event) {
+        int sortIndex = CBFlightsSort.getSelectionModel().getSelectedIndex();
+        int displayIndex = CBFlightsDisplay.getSelectionModel().getSelectedIndex();
+        boolean isRelevant = false;
+        if (displayIndex == 1) {
+            isRelevant = true;
+        }
+        String text = TFFlightsCustom.getText();
+
+        switch (sortIndex) {
+            case 0 -> {      //none
+                ObservableList<Flight> flights = FXCollections.observableArrayList(flightsHandler.getFlights(isRelevant));
+                TVFlightsTable.setItems(flights);
+            }
+            case 1 -> {      //Destination and departure dates
+                if (text.isEmpty()) {
+                    showAlert("Wrong input!", "Text is empty!");
+                    return;
+                }
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
+                java.util.Date parsedFrom;
+                java.util.Date parsedTo;
+                try {
+                    parsedFrom = dateFormat.parse(DPDepartureFrom.getEditor().getText());
+                    parsedTo = dateFormat.parse(DPDepartureTo.getEditor().getText());
+                } catch (ParseException e) {
+                    showAlert("Wrong input!", "Wrong timestamp!");
+                    return;
+                }
+                Timestamp from = new Timestamp(parsedFrom.getTime());
+                Timestamp to = new Timestamp(parsedTo.getTime());
+                ArrayList<Flight> list = flightsHandler.getSortedByDestinationAndDates(text, from, to, isRelevant);
+                ObservableList<Flight> flights = FXCollections.observableArrayList(list);
+                TVFlightsTable.setItems(flights);
+            }
+            case 2 -> {      //specific airline
+                if (text.isEmpty()) {
+                    showAlert("Wrong input!", "Text is empty!");
+                    return;
+                }
+                ArrayList<Flight> list = flightsHandler.getSortedByAirline(text, isRelevant);
+                ObservableList<Flight> flights = FXCollections.observableArrayList(list);
+                TVFlightsTable.setItems(flights);
+            }
+            case 3 -> {      //flights with first and business class
+                ArrayList<Flight> list = flightsHandler.getSortedByClassesSeats(isRelevant);
+                ObservableList<Flight> flights = FXCollections.observableArrayList(list);
+                TVFlightsTable.setItems(flights);
+            }
+            case 4 -> {      //lower base price
+                if (text.isEmpty()) {
+                    showAlert("Wrong input!", "Text is empty!");
+                    return;
+                }
+                double price;
+                try {
+                    price = Double.parseDouble(text);
+                } catch (NumberFormatException e) {
+                    showAlert("Wrong input!", "Wrong price!");
+                    return;
+                }
+                ArrayList<Flight> list = flightsHandler.getSortedByPrice(price, isRelevant);
+                ObservableList<Flight> flights = FXCollections.observableArrayList(list);
+                TVFlightsTable.setItems(flights);
+            }
+        }
+    }
+
     public void setConnection(Connection con) {
         this.con = con;
         flightsHandler = new FlightsHandler(con);
@@ -752,7 +885,7 @@ public class MainScreenController implements PropertyChangeListener {
         tariffsHandler = new TariffsHandler(con);
         ticketsHandler = new TicketsHandler(con);
 
-        ObservableList<Flight> flights = FXCollections.observableArrayList(flightsHandler.getFlights());
+        ObservableList<Flight> flights = FXCollections.observableArrayList(flightsHandler.getFlights(false));
         TVFlightsTable.setItems(flights);
 
         TCUserRole.setCellFactory(ComboBoxTableCell.forTableColumn(FXCollections.observableArrayList(rolesHandler.getRoles())));
@@ -825,8 +958,9 @@ public class MainScreenController implements PropertyChangeListener {
                 TVPlanesTable.setItems(planes);
             }
             case FLIGHT -> {
-                ObservableList<Flight> flights = FXCollections.observableArrayList(flightsHandler.getFlights());
+                ObservableList<Flight> flights = FXCollections.observableArrayList(flightsHandler.getFlights(false));
                 TVFlightsTable.setItems(flights);
+                CBFlightsDisplay.getSelectionModel().select(0);
             }
             case TARIFF -> {
                 ObservableList<Tariff> tariffs = FXCollections.observableArrayList(tariffsHandler.getTariffs());
