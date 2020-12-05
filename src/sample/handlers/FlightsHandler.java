@@ -18,18 +18,24 @@ public class FlightsHandler {
         ArrayList<Flight> flights = new ArrayList<>();
 
         String added = "";
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         if (isRelevant) {
-            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-            added = "WHERE f.Departure_date <= '" + timestamp.toString() + "'";
+            System.out.println(timestamp);
+            added = "WHERE f.Departure_date >= ? ";
+            System.out.println(added);
         }
 
         try {
-            Statement statement = con.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT f.Flight_code, f.Departure, f.Destination, f.Departure_date, f.Arrival_date, p.Name, a.Name, f.Status, t.Base_price\n" +
+            PreparedStatement ps = con.prepareStatement("SELECT f.Flight_code, f.Departure, f.Destination, f.Departure_date, f.Arrival_date, p.Name, a.Name, f.Status, t.Base_price\n" +
                     "FROM Flights f\n" +
                     "INNER JOIN Airlines a ON a.Id = f.Airline_id \n" +
                     "INNER JOIN Planes p ON p.id = f.Plane_id\n" +
                     "INNER JOIN Tariffs t ON t.Id = f.Tariff_id\n" + added);
+            if (isRelevant) {
+                ps.setTimestamp(1, timestamp);
+            }
+
+            ResultSet resultSet = ps.executeQuery();
 
             flights = getFlightListFromResultSet(resultSet);
         } catch (SQLException e) {
@@ -131,7 +137,7 @@ public class FlightsHandler {
         String added = "";
         if (isRelevant) {
             Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-            added = " AND Departure >= '" + timestamp.toString() + "'";
+            added = " AND f.Departure_date >= '" + timestamp.toString() + "'";
         }
 
         try {
@@ -162,9 +168,11 @@ public class FlightsHandler {
         ArrayList<Flight> flights = new ArrayList<>();
 
         String added = "";
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         if (isRelevant) {
-            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-            added = " AND Departure >= '" + timestamp.toString() + "'";
+            System.out.println(timestamp);
+            added = "AND f.Departure_date >= ? ";
+            System.out.println(added);
         }
 
         try {
@@ -175,6 +183,9 @@ public class FlightsHandler {
                     "INNER JOIN Tariffs t ON t.Id = f.Tariff_id " +
                     "WHERE a.Name = ? " + added);
             ps.setString(1, currAirline);
+            if (isRelevant) {
+                ps.setTimestamp(2, timestamp);
+            }
             ResultSet resultSet = ps.executeQuery();
 
             flights = getFlightListFromResultSet(resultSet);
@@ -193,19 +204,24 @@ public class FlightsHandler {
         ArrayList<Flight> flights = new ArrayList<>();
 
         String added = "";
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         if (isRelevant) {
-            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-            added = " AND Departure >= '" + timestamp.toString() + "'";
+            System.out.println(timestamp);
+            added = "AND f.Departure_date >= ? ";
+            System.out.println(added);
         }
 
         try {
-            Statement statement = con.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT f.Flight_code, f.Departure, f.Destination, f.Departure_date, f.Arrival_date, p.Name, a.Name, f.Status, t.Base_price\n" +
+            PreparedStatement ps = con.prepareStatement("SELECT f.Flight_code, f.Departure, f.Destination, f.Departure_date, f.Arrival_date, p.Name, a.Name, f.Status, t.Base_price\n" +
                     "FROM Flights f\n" +
                     "INNER JOIN Airlines a ON a.Id = f.Airline_id \n" +
                     "INNER JOIN Planes p ON p.id = f.Plane_id\n" +
                     "INNER JOIN Tariffs t ON t.Id = f.Tariff_id " +
                     "WHERE p.Business_class_seats != 0 and p.First_class_seats != 0 " + added);
+            if (isRelevant) {
+                ps.setTimestamp(1, timestamp);
+            }
+            ResultSet resultSet = ps.executeQuery();
 
             flights = getFlightListFromResultSet(resultSet);
         } catch (SQLException e) {
@@ -223,9 +239,11 @@ public class FlightsHandler {
         ArrayList<Flight> flights = new ArrayList<>();
 
         String added = "";
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         if (isRelevant) {
-            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-            added = " AND Departure >= '" + timestamp.toString() + "'";
+            System.out.println(timestamp);
+            added = "AND f.Departure_date >= ? ";
+            System.out.println(added);
         }
 
         try {
@@ -236,6 +254,9 @@ public class FlightsHandler {
                     "INNER JOIN Tariffs t ON t.Id = f.Tariff_id " +
                     "WHERE t.Base_price <= ? " + added);
             ps.setDouble(1, price);
+            if (isRelevant) {
+                ps.setTimestamp(2, timestamp);
+            }
             ResultSet resultSet = ps.executeQuery();
 
             flights = getFlightListFromResultSet(resultSet);

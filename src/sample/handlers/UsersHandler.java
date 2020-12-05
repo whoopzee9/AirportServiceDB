@@ -2,6 +2,7 @@ package sample.handlers;
 
 import javafx.scene.control.Alert;
 import sample.tables.Flight;
+import sample.tables.Role;
 import sample.tables.Ticket;
 import sample.tables.User;
 
@@ -25,16 +26,7 @@ public class UsersHandler {
                     "FROM Users u\n" +
                     "INNER JOIN Roles r ON r.Id = u.Role_id \n");
 
-            while (resultSet.next()) {
-                String name = resultSet.getString(1);
-                Date date = resultSet.getDate(2);
-                String address = resultSet.getString(3);
-                String phone = resultSet.getString(4);
-                String email = resultSet.getString(5);
-                String role = resultSet.getString(6);
-                String login = resultSet.getString(7);
-                users.add(new User(name, date, address, phone, email, role, login));
-            }
+            users = getUsersFromResultSet(resultSet);
         } catch (SQLException e) {
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Warning");
@@ -104,5 +96,43 @@ public class UsersHandler {
         PreparedStatement ps = con.prepareStatement("DELETE FROM Users WHERE Login = ?");
         ps.setString(1, user.getUsername());
         ps.executeUpdate();
+    }
+
+    public ArrayList<User> getSortedByRole(Role role) {
+        ArrayList<User> users = new ArrayList<>();
+
+        try {
+            PreparedStatement ps = con.prepareStatement("SELECT u.Name, u.BirthDate, u.Address, u.Phone, u.Email, r.Role, u.Login\n" +
+                    "FROM Users u\n" +
+                    "INNER JOIN Roles r ON r.Id = u.Role_id \n" +
+                    "WHERE r.Role = ?");
+            ps.setString(1, role.getName());
+            ResultSet resultSet = ps.executeQuery();
+
+            users = getUsersFromResultSet(resultSet);
+        } catch (SQLException e) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Warning");
+            alert.setHeaderText("No permission");
+            alert.setContentText("You don't have permission to read from users table!");
+            alert.showAndWait();
+        }
+
+        return users;
+    }
+
+    private ArrayList<User> getUsersFromResultSet(ResultSet resultSet) throws SQLException {
+        ArrayList<User> users = new ArrayList<>();
+        while (resultSet.next()) {
+            String name = resultSet.getString(1);
+            Date date = resultSet.getDate(2);
+            String address = resultSet.getString(3);
+            String phone = resultSet.getString(4);
+            String email = resultSet.getString(5);
+            String role = resultSet.getString(6);
+            String login = resultSet.getString(7);
+            users.add(new User(name, date, address, phone, email, role, login));
+        }
+        return users;
     }
 }
