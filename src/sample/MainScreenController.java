@@ -1123,14 +1123,6 @@ public class MainScreenController implements PropertyChangeListener {
         ObservableList<Flight> flights = FXCollections.observableArrayList(flightsHandler.getFlights(false));
         TVFlightsTable.setItems(flights);
 
-        Statement statement = null;
-        try {
-            statement = con.createStatement();
-            statement.executeUpdate("GRANT ALTER ANY LOGIN TO newAdmin WITH GRANT OPTION");
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-
         TCUserRole.setCellFactory(ComboBoxTableCell.forTableColumn(FXCollections.observableArrayList(rolesHandler.getRoles())));
         TCPlane.setCellFactory(param -> new ComboBoxTableCell<>(FXCollections.observableArrayList(planesHandler.getPlanes())));
     }

@@ -123,6 +123,7 @@ public class FlightsHandler {
 
             ps.executeUpdate();
         } catch (SQLException throwables) {
+            throwables.printStackTrace();
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Warning");
             alert.setHeaderText("Request error");
@@ -206,9 +207,7 @@ public class FlightsHandler {
         String added = "";
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         if (isRelevant) {
-            System.out.println(timestamp);
             added = "AND f.Departure_date >= ? ";
-            System.out.println(added);
         }
 
         try {
