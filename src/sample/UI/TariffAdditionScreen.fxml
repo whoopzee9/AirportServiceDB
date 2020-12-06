@@ -4,15 +4,15 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="300.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.TariffScreenController">
+<AnchorPane prefHeight="300.0" prefWidth="500.0" style="-fx-background-image: url(/sample/UI/nebo.jpg)" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.TariffScreenController">
     <children>
         <Label layoutX="139.0" layoutY="14.0" text="Add new tariff">
             <font>
                 <Font name="System Bold" size="30.0" />
             </font>
         </Label>
-        <Button layoutX="360.0" layoutY="220.0" mnemonicParsing="false" onAction="#onDoneClicked" prefHeight="46.0" prefWidth="105.0" text="Done" />
-        <TextField fx:id="TFBasePrice" layoutX="223.0" layoutY="109.0" prefHeight="26.0" prefWidth="149.0" promptText="base price" />
+        <Button layoutX="360.0" layoutY="220.0" mnemonicParsing="false" onAction="#onDoneClicked" prefHeight="46.0" prefWidth="105.0" style="-fx-background-radius: 20px;" text="Done" />
+        <TextField fx:id="TFBasePrice" layoutX="223.0" layoutY="109.0" prefHeight="26.0" prefWidth="149.0" promptText="base price" style="-fx-background-radius: 10px;" />
         <Label layoutX="139.0" layoutY="113.0" text="Name" />
     </children>
 

@@ -9,6 +9,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.image.Image;
+import javafx.scene.layout.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
@@ -190,6 +192,11 @@ public class MainScreenController implements PropertyChangeListener {
         TCClassMultiplier.setCellValueFactory(new PropertyValueFactory<>("multiplier"));
 
         TCTariffBasePrice.setCellValueFactory(new PropertyValueFactory<>("basePrice"));
+
+        /*BackgroundImage myBI= new BackgroundImage(new Image("/sample/UI/nebo.jpg",900,700,false,true),
+                BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
+                BackgroundSize.DEFAULT);
+        TPTabPane.setBackground(new Background(myBI));*/
 
         //Flights comboBoxes init---------------------
         ObservableList<String> list = FXCollections.observableArrayList();
@@ -801,6 +808,7 @@ public class MainScreenController implements PropertyChangeListener {
             usersHandler.deleteUser(user);
             TVUsersTable.getItems().remove(index);
         } catch (SQLException throwables) {
+            throwables.printStackTrace();
             showAlert("Deleting conflict!", "Can not delete. Please check all dependencies!");
         }
     }
@@ -1114,6 +1122,14 @@ public class MainScreenController implements PropertyChangeListener {
 
         ObservableList<Flight> flights = FXCollections.observableArrayList(flightsHandler.getFlights(false));
         TVFlightsTable.setItems(flights);
+
+        Statement statement = null;
+        try {
+            statement = con.createStatement();
+            statement.executeUpdate("GRANT ALTER ANY LOGIN TO newAdmin WITH GRANT OPTION");
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
 
         TCUserRole.setCellFactory(ComboBoxTableCell.forTableColumn(FXCollections.observableArrayList(rolesHandler.getRoles())));
         TCPlane.setCellFactory(param -> new ComboBoxTableCell<>(FXCollections.observableArrayList(planesHandler.getPlanes())));

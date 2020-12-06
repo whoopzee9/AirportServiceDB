@@ -4,21 +4,21 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.TicketAdditionController">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" style="-fx-background-image: url(/sample/UI/nebo.jpg)" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.TicketAdditionController">
     <children>
         <Label layoutX="194.0" layoutY="14.0" text="Add new ticket">
             <font>
                 <Font name="System Bold" size="30.0" />
             </font>
         </Label>
-        <Button layoutX="462.0" layoutY="329.0" mnemonicParsing="false" onAction="#onDoneClicked" prefHeight="46.0" prefWidth="105.0" text="Done" />
-        <TextField fx:id="TFName" layoutX="111.0" layoutY="89.0" prefHeight="26.0" prefWidth="198.0" promptText="name" />
+        <Button layoutX="462.0" layoutY="329.0" mnemonicParsing="false" onAction="#onDoneClicked" prefHeight="46.0" prefWidth="105.0" style="-fx-background-radius: 20px;" text="Done" />
+        <TextField fx:id="TFName" layoutX="111.0" layoutY="89.0" prefHeight="26.0" prefWidth="198.0" promptText="name" style="-fx-background-radius: 10px;" />
         <Label layoutX="52.0" layoutY="93.0" text="Name" />
         <DatePicker fx:id="DPBirthDate" editable="false" layoutX="112.0" layoutY="128.0" prefHeight="26.0" prefWidth="149.0" promptText="date" />
-        <TextField fx:id="TFPassport" layoutX="111.0" layoutY="169.0" promptText="destination" />
-        <ComboBox fx:id="CBFlight" layoutX="422.0" layoutY="89.0" prefWidth="150.0" />
-        <ComboBox fx:id="CBClass" layoutX="422.0" layoutY="169.0" prefWidth="150.0" />
-        <TextField fx:id="TFPrice" editable="false" layoutX="307.0" layoutY="267.0" prefHeight="31.0" prefWidth="134.0" promptText="price">
+        <TextField fx:id="TFPassport" layoutX="111.0" layoutY="169.0" promptText="destination" style="-fx-background-radius: 10px;" />
+        <ComboBox fx:id="CBFlight" layoutX="422.0" layoutY="89.0" prefWidth="150.0" style="-fx-background-radius: 10px;" />
+        <ComboBox fx:id="CBClass" layoutX="422.0" layoutY="169.0" prefWidth="150.0" style="-fx-background-radius: 10px;" />
+        <TextField fx:id="TFPrice" editable="false" layoutX="307.0" layoutY="267.0" prefHeight="31.0" prefWidth="134.0" promptText="price" style="-fx-background-radius: 10px;">
          <font>
             <Font size="15.0" />
          </font></TextField>
@@ -31,7 +31,7 @@
          <font>
             <Font size="21.0" />
          </font></Label>
-      <ComboBox fx:id="CBSeat" layoutX="422.0" layoutY="129.0" prefWidth="150.0" />
+      <ComboBox fx:id="CBSeat" layoutX="422.0" layoutY="129.0" prefWidth="150.0" style="-fx-background-radius: 10px;" />
     </children>
 
 </AnchorPane>
