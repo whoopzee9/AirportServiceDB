@@ -143,9 +143,7 @@ public class TicketsHandler {
         String added = "";
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         if (isRelevant) {
-            System.out.println(timestamp);
             added = "AND f.Departure_date >= ? ";
-            System.out.println(added);
         }
 
         try {

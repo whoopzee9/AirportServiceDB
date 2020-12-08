@@ -130,7 +130,7 @@ public class TicketAdditionController {
             dateTmp = format.parse(dateStr);
         } catch (ParseException e) {
             e.printStackTrace();
-            alert.setContentText("Wrong date!");
+            alert.setContentText("Wrong date! It should be dd.MM.yyyy");
             alert.showAndWait();
             return;
         }

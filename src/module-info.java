@@ -5,6 +5,7 @@ module SMO {
     requires java.desktop;
     requires java.sql;
     requires java.base;
+    requires javax.xml.bind;
 
     opens sample;
     opens sample.tables;

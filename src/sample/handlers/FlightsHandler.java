@@ -136,9 +136,9 @@ public class FlightsHandler {
         ArrayList<Flight> flights = new ArrayList<>();
 
         String added = "";
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         if (isRelevant) {
-            Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-            added = " AND f.Departure_date >= '" + timestamp.toString() + "'";
+            added = "AND f.Departure_date >= ? ";
         }
 
         try {
@@ -151,6 +151,9 @@ public class FlightsHandler {
             ps.setString(1, destination);
             ps.setTimestamp(2, departureFrom);
             ps.setTimestamp(3, departureTo);
+            if (isRelevant) {
+                ps.setTimestamp(4, timestamp);
+            }
             ResultSet resultSet = ps.executeQuery();
 
             flights = getFlightListFromResultSet(resultSet);
@@ -171,9 +174,7 @@ public class FlightsHandler {
         String added = "";
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         if (isRelevant) {
-            System.out.println(timestamp);
             added = "AND f.Departure_date >= ? ";
-            System.out.println(added);
         }
 
         try {
@@ -255,6 +256,76 @@ public class FlightsHandler {
             ps.setDouble(1, price);
             if (isRelevant) {
                 ps.setTimestamp(2, timestamp);
+            }
+            ResultSet resultSet = ps.executeQuery();
+
+            flights = getFlightListFromResultSet(resultSet);
+        } catch (SQLException e) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Warning");
+            alert.setHeaderText("No permission");
+            alert.setContentText("You don't have permission to read from flight table!");
+            alert.showAndWait();
+        }
+
+        return flights;
+    }
+
+    public ArrayList<Flight> getSortedByOnlyDeparture(boolean isRelevant) {
+        ArrayList<Flight> flights = new ArrayList<>();
+
+        String added = "";
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        if (isRelevant) {
+            System.out.println(timestamp);
+            added = "AND f.Departure_date >= ? ";
+            System.out.println(added);
+        }
+
+        try {
+            PreparedStatement ps = con.prepareStatement("SELECT f.Flight_code, f.Departure, f.Destination, f.Departure_date, f.Arrival_date, p.Name, a.Name, f.Status, t.Base_price\n" +
+                    "FROM Flights f\n" +
+                    "INNER JOIN Airlines a ON a.Id = f.Airline_id \n" +
+                    "INNER JOIN Planes p ON p.id = f.Plane_id\n" +
+                    "INNER JOIN Tariffs t ON t.Id = f.Tariff_id " +
+                    "WHERE f.Departure = 'Moscow' " + added);
+            if (isRelevant) {
+                ps.setTimestamp(1, timestamp);
+            }
+            ResultSet resultSet = ps.executeQuery();
+
+            flights = getFlightListFromResultSet(resultSet);
+        } catch (SQLException e) {
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Warning");
+            alert.setHeaderText("No permission");
+            alert.setContentText("You don't have permission to read from flight table!");
+            alert.showAndWait();
+        }
+
+        return flights;
+    }
+
+    public ArrayList<Flight> getSortedByOnlyArrival(boolean isRelevant) {
+        ArrayList<Flight> flights = new ArrayList<>();
+
+        String added = "";
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        if (isRelevant) {
+            System.out.println(timestamp);
+            added = "AND f.Departure_date >= ? ";
+            System.out.println(added);
+        }
+
+        try {
+            PreparedStatement ps = con.prepareStatement("SELECT f.Flight_code, f.Departure, f.Destination, f.Departure_date, f.Arrival_date, p.Name, a.Name, f.Status, t.Base_price\n" +
+                    "FROM Flights f\n" +
+                    "INNER JOIN Airlines a ON a.Id = f.Airline_id \n" +
+                    "INNER JOIN Planes p ON p.id = f.Plane_id\n" +
+                    "INNER JOIN Tariffs t ON t.Id = f.Tariff_id " +
+                    "WHERE f.Destination = 'Moscow' " + added);
+            if (isRelevant) {
+                ps.setTimestamp(1, timestamp);
             }
             ResultSet resultSet = ps.executeQuery();
 

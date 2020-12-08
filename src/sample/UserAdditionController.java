@@ -14,8 +14,15 @@ import sample.tables.Plane;
 import sample.tables.Role;
 import sample.tables.User;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.xml.bind.DatatypeConverter;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.DateFormat;
@@ -80,13 +87,25 @@ public class UserAdditionController {
             return;
         }
 
+        String transformation = "AES/ECB/PKCS5Padding";
+        byte[] encrypted;
+        try {
+            Cipher cipher = Cipher.getInstance(transformation);
+            cipher.init(Cipher.ENCRYPT_MODE, Constants.key);
+            encrypted = cipher.doFinal(password.getBytes());
+        } catch (NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | BadPaddingException | IllegalBlockSizeException e) {
+            e.printStackTrace();
+            return;
+        }
+        String encPassword = DatatypeConverter.printHexBinary(encrypted);
+
         DateFormat format = new SimpleDateFormat("dd.MM.yyyy");
         Date dateTmp;
         try {
             dateTmp = format.parse(dateStr);
         } catch (ParseException e) {
             e.printStackTrace();
-            alert.setContentText("Wrong date!");
+            alert.setContentText("Wrong date! It should be dd.mm.yyyy");
             alert.showAndWait();
             return;
         }
@@ -96,7 +115,7 @@ public class UserAdditionController {
         User user = new User(name, birthDate, address, phone, email, role.getName(), username);
 
         try {
-            usersHandler.addUser(user, username, password);
+            usersHandler.addUser(user, encPassword);
 
             Stage stage = (Stage) TFAddress.getScene().getWindow();
             stage.close();

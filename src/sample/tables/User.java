@@ -10,7 +10,6 @@ public class User {
     private String email;
     private String role;
     private String username;
-    private String password;
 
     public User(String name, Date birthDate, String address, String phone, String email, String role, String username) {
         this.name = name;

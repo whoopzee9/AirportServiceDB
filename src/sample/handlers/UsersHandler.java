@@ -28,6 +28,7 @@ public class UsersHandler {
 
             users = getUsersFromResultSet(resultSet);
         } catch (SQLException e) {
+            e.printStackTrace();
             Alert alert = new Alert(Alert.AlertType.WARNING);
             alert.setTitle("Warning");
             alert.setHeaderText("No permission");
@@ -38,7 +39,7 @@ public class UsersHandler {
         return users;
     }
 
-    public void addUser(User user, String username, String password) throws SQLException {
+    public void addUser(User user, String password) throws SQLException {
         PreparedStatement ps = con.prepareStatement("EXEC CreateUser ?, ?, ?, ?, ?, ?, ?, ?");
         ps.setString(1, user.getName());
         ps.setDate(2, user.getBirthDate());
@@ -46,7 +47,7 @@ public class UsersHandler {
         ps.setString(4, user.getPhone());
         ps.setString(5, user.getEmail());
         ps.setString(6, user.getRole());
-        ps.setString(7, username);
+        ps.setString(7, user.getUsername());
         ps.setString(8, password);
 
         ps.executeUpdate();

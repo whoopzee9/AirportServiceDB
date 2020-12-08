@@ -19,6 +19,7 @@ import sample.tables.Flight;
 import sample.tables.Plane;
 import sample.tables.Tariff;
 
+import javax.xml.bind.SchemaOutputResolver;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.sql.Connection;
@@ -187,6 +188,12 @@ public class FlightAdditionController {
             return;
         }
 
+        if (departure.equals(destination) || (!departure.equals("Moscow") && !destination.equals("Moscow"))) {
+            alert.setContentText("Wrong destination and/or departure!");
+            alert.showAndWait();
+            return;
+        }
+
         DateFormat format = new SimpleDateFormat("dd.MM.yyyy");
         Date depDate;
         Date arrDate;
@@ -212,6 +219,12 @@ public class FlightAdditionController {
             time += arrivalTimeMins * 60 * 1000;
             arrivalTime = new Timestamp(time);
         } else {
+            alert.setContentText("Wrong dates!");
+            alert.showAndWait();
+            return;
+        }
+
+        if (arrivalTime.before(departureTime) || arrivalTime.equals(departureTime)) {
             alert.setContentText("Wrong dates!");
             alert.showAndWait();
             return;

@@ -13,6 +13,7 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 import javafx.util.StringConverter;
 import sample.handlers.*;
 import sample.tables.*;
@@ -26,6 +27,7 @@ import java.sql.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Optional;
 
 public class MainScreenController implements PropertyChangeListener {
 
@@ -46,6 +48,7 @@ public class MainScreenController implements PropertyChangeListener {
     public DatePicker DPDepartureTo;
     public ComboBox<String> CBFlightsSort;
     public CheckBox ChBFlightsIsRelevant;
+    public ComboBox<Airline> CBFlightsAirlines;
     public TextField TFFlightsCustom;
     public Label LFlightsCustom;
     public Label LDepartureFrom;
@@ -82,6 +85,7 @@ public class MainScreenController implements PropertyChangeListener {
     public TableColumn<User, String> TCUserLogin;
     public ComboBox<String> CBUsersSort;
     public ComboBox<Role> CBUsersRoles;
+    public CheckBox ChBShowPasswords;
     public Label LUsersRole;
 
     public Tab TPlanes;
@@ -114,6 +118,9 @@ public class MainScreenController implements PropertyChangeListener {
     public TableColumn<Tariff, Double> TCTariffBasePrice;
 
     public Tab TLogOut;
+    public PasswordField PFChangeOldPassword;
+    public PasswordField PFChangeNewPassword;
+    public PasswordField PFChangeRepeatNewPassword;
 
     private Connection con;
     private FlightsHandler flightsHandler;
@@ -145,7 +152,7 @@ public class MainScreenController implements PropertyChangeListener {
     }
 
     public MainScreenController() {
-        System.out.println("created!");
+
     }
 
     @FXML
@@ -193,18 +200,21 @@ public class MainScreenController implements PropertyChangeListener {
 
         TCTariffBasePrice.setCellValueFactory(new PropertyValueFactory<>("basePrice"));
 
-        /*BackgroundImage myBI= new BackgroundImage(new Image("/sample/UI/nebo.jpg",900,700,false,true),
-                BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
-                BackgroundSize.DEFAULT);
-        TPTabPane.setBackground(new Background(myBI));*/
+        CBTicketsCashiers.setVisibleRowCount(4);
 
-        //Flights comboBoxes init---------------------
+        ChBShowPasswords.setOnAction(event -> {
+            TVUsersTable.refresh();
+        });
+
+        //Flights comboBoxes init----------------------------------------------
         ObservableList<String> list = FXCollections.observableArrayList();
         list.add("none");
-        list.add("Destination and departure dates");
+        list.add("Destination place and departure dates");
         list.add("specific airline");
         list.add("flights with first and business class");
         list.add("lower base price");
+        list.add("only departure");
+        list.add("only arrival");
         CBFlightsSort.setItems(list);
         CBFlightsSort.getSelectionModel().select(0);
         DPDepartureFrom.setVisible(false);
@@ -213,6 +223,7 @@ public class MainScreenController implements PropertyChangeListener {
         LDepartureTo.setVisible(false);
         TFFlightsCustom.setVisible(false);
         LFlightsCustom.setVisible(false);
+        CBFlightsAirlines.setVisible(false);
 
         //Tickets comboBox init-----------------------------
         list = FXCollections.observableArrayList();
@@ -274,6 +285,14 @@ public class MainScreenController implements PropertyChangeListener {
             ObservableList<Airline> oldAirlines = CBPlanesAirlines.getItems();
             if (!airlines.equals(oldAirlines)) {
                 CBPlanesAirlines.setItems(airlines);
+            }
+        });
+
+        CBFlightsAirlines.setOnMouseClicked(event -> {
+            ObservableList<Airline> airlines = FXCollections.observableArrayList(airlinesHandler.getAirlines());
+            ObservableList<Airline> oldAirlines = CBFlightsAirlines.getItems();
+            if (!airlines.equals(oldAirlines)) {
+                CBFlightsAirlines.setItems(airlines);
             }
         });
 
@@ -604,8 +623,17 @@ public class MainScreenController implements PropertyChangeListener {
     }
 
     public void onExitClicked() {
-        Stage stage = (Stage) TPTabPane.getScene().getWindow();
-        stage.close();
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Warning");
+        alert.setHeaderText("Exit");
+        alert.setContentText("Are you sure?");
+        Optional<ButtonType> option = alert.showAndWait();
+        if (option.get() == null) {
+            //error
+        } else if (option.get() == ButtonType.OK) {
+            Stage stage = (Stage) TPTabPane.getScene().getWindow();
+            stage.close();
+        }
     }
 
     //EDITING HANDLERS--------------------------------------------------------------------------
@@ -865,11 +893,12 @@ public class MainScreenController implements PropertyChangeListener {
         DPDepartureTo.setVisible(false);
         LDepartureFrom.setVisible(false);
         LDepartureTo.setVisible(false);
+        CBFlightsAirlines.setVisible(false);
         TFFlightsCustom.clear();
         DPDepartureFrom.getEditor().clear();
         DPDepartureTo.getEditor().clear();
         switch (index) {
-            case 0, 3 -> {      //none     //flights with first and business class
+            case 0, 3, 5, 6 -> {      //none     //flights with first and business class
                 TFFlightsCustom.setVisible(false);
                 LFlightsCustom.setVisible(false);
             }
@@ -883,7 +912,8 @@ public class MainScreenController implements PropertyChangeListener {
                 LDepartureTo.setVisible(true);
             }
             case 2 -> {      //specific airline
-                TFFlightsCustom.setVisible(true);
+                TFFlightsCustom.setVisible(false);
+                CBFlightsAirlines.setVisible(true);
                 LFlightsCustom.setVisible(true);
                 LFlightsCustom.setText("Airline");
             }
@@ -930,11 +960,12 @@ public class MainScreenController implements PropertyChangeListener {
                 TVFlightsTable.setItems(flights);
             }
             case 2 -> {      //specific airline
-                if (text.isEmpty()) {
-                    showAlert("Wrong input!", "Text is empty!");
+                Airline airline = CBFlightsAirlines.getValue();
+                if (airline == null) {
+                    showAlert("Wrong input!", "Choose airline!");
                     return;
                 }
-                ArrayList<Flight> list = flightsHandler.getSortedByAirline(text, isRelevant);
+                ArrayList<Flight> list = flightsHandler.getSortedByAirline(airline.getName(), isRelevant);
                 ObservableList<Flight> flights = FXCollections.observableArrayList(list);
                 TVFlightsTable.setItems(flights);
             }
@@ -957,6 +988,14 @@ public class MainScreenController implements PropertyChangeListener {
                 }
                 ArrayList<Flight> list = flightsHandler.getSortedByPrice(price, isRelevant);
                 ObservableList<Flight> flights = FXCollections.observableArrayList(list);
+                TVFlightsTable.setItems(flights);
+            }
+            case 5 -> {
+                ObservableList<Flight> flights = FXCollections.observableArrayList(flightsHandler.getSortedByOnlyDeparture(isRelevant));
+                TVFlightsTable.setItems(flights);
+            }
+            case 6 -> {
+                ObservableList<Flight> flights = FXCollections.observableArrayList(flightsHandler.getSortedByOnlyArrival(isRelevant));
                 TVFlightsTable.setItems(flights);
             }
         }
@@ -1107,6 +1146,30 @@ public class MainScreenController implements PropertyChangeListener {
                 TVUsersTable.setItems(users);
             }
         }
+        TVUsersTable.refresh();
+    }
+
+
+    public void onChangePasswordClicked(ActionEvent event) {
+        String oldPassword = PFChangeOldPassword.getText();
+        String newPassword = PFChangeNewPassword.getText();
+        String repeatPassword = PFChangeRepeatNewPassword.getText();
+
+        if (!newPassword.equals(repeatPassword)) {
+            showAlert("Wrong input!", "Passwords are not the same!");
+            return;
+        }
+
+        try {
+            PreparedStatement ps = con.prepareStatement("ALTER LOGIN ? WITH PASSWORD = ? OLD_PASSWORD = ?");
+            ps.setString(1, currUser.getUsername());
+            ps.setString(2, newPassword);
+            ps.setString(3, oldPassword);
+            ps.executeUpdate();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+            showAlert("Request error!", "Request failed!");
+        }
     }
 
     public void setConnection(Connection con) {
@@ -1142,6 +1205,7 @@ public class MainScreenController implements PropertyChangeListener {
     }
 
     public void closeTabs() {
+        TPTabPane.getTabs().remove(TRoles);
         switch (currRole) {
             case ADMIN -> {
                 BAddFlights.setVisible(false);
