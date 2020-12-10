@@ -73,6 +73,7 @@ public class MainScreenController implements PropertyChangeListener {
     public Label LTicketsClasses;
     public Label LTicketsCashiers;
     public Button BAddTickets;
+    public Button BDeleteTicket;
 
     public Tab TUsers;
     public TableView<User> TVUsersTable;
@@ -1210,6 +1211,7 @@ public class MainScreenController implements PropertyChangeListener {
             case ADMIN -> {
                 BAddFlights.setVisible(false);
                 BAddTickets.setVisible(false);
+                BDeleteTicket.setVisible(false);
                 TVTicketsTable.setEditable(false);
                 TVFlightsTable.setEditable(false);
             }

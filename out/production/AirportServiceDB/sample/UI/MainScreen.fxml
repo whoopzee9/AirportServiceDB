@@ -59,7 +59,7 @@
                    </TableView>
                    <Button layoutX="595.0" layoutY="66.0" mnemonicParsing="false" onAction="#onTicketsSortClicked" prefHeight="36.0" prefWidth="97.0" style="-fx-background-radius: 15px;" text="Sort" />
                   <Button fx:id="BAddTickets" layoutX="704.0" layoutY="66.0" mnemonicParsing="false" onAction="#onAddNewTicketClicked" prefHeight="36.0" prefWidth="97.0" style="-fx-background-radius: 15px;" text="Add New" />
-                  <Button layoutX="595.0" layoutY="123.0" mnemonicParsing="false" onAction="#onDeleteTicketClicked" prefHeight="36.0" style="-fx-background-radius: 15px;" text="Delete selected" />
+                  <Button fx:id="BDeleteTicket" layoutX="595.0" layoutY="123.0" mnemonicParsing="false" onAction="#onDeleteTicketClicked" prefHeight="36.0" style="-fx-background-radius: 15px;" text="Delete selected" />
                   <ComboBox fx:id="CBTicketsSort" layoutX="16.0" layoutY="24.0" onAction="#CBTicketsSortOnAction" prefWidth="150.0" style="-fx-background-radius: 10px;" />
                   <Label fx:id="LTicketsFlights" layoutX="235.0" layoutY="28.0" text="Flight" />
                   <Label fx:id="LTicketsCashiers" layoutX="230.0" layoutY="28.0" text="Cashier" />
